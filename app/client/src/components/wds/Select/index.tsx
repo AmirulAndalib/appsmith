@@ -26,6 +26,7 @@ function Select(props: Props) {
     );
 
   return (
+    // @ts-expect-error type
     <Popover
       content={menus}
       popoverClassName="Select-v2"

@@ -12,6 +12,12 @@ import {
 } from "components/editorComponents/CodeEditor/EditorConfig";
 import { getDynamicBindings, isDynamicValue } from "utils/DynamicBindingUtils";
 import { isString } from "utils/helpers";
+import {
+  bindingMarker,
+  entityMarker,
+} from "../editorComponents/CodeEditor/markHelpers";
+import { bindingHint } from "../editorComponents/CodeEditor/hintHelpers";
+import { commandsHelper } from "../editorComponents/CodeEditor/commandsHelper";
 
 export const getBindingTemplate = (widgetName: string) => {
   const prefixTemplate = `{{ ((options, serverSideFiltering) => ( `;
@@ -72,10 +78,12 @@ function InputText(props: InputTextProp) {
         dataTreePath={dataTreePath}
         evaluatedValue={evaluatedValue}
         expected={expected}
+        hinting={[bindingHint, commandsHelper]}
         input={{
           value: value,
           onChange: onChange,
         }}
+        marking={[bindingMarker, entityMarker]}
         mode={EditorModes.TEXT_WITH_BINDING}
         placeholder={placeholder}
         size={EditorSize.EXTENDED}

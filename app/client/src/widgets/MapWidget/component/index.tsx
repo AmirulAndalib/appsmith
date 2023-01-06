@@ -11,6 +11,7 @@ export interface MarkerProps {
   description?: string;
   color?: string;
 }
+
 export interface MapComponentProps {
   apiKey: string;
   widgetId: string;

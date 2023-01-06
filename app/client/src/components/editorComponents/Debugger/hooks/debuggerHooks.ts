@@ -134,7 +134,7 @@ export const useEntityLink = () => {
   const { navigateToWidget } = useNavigateToWidget();
 
   const navigateToEntity = useCallback(
-    (name) => {
+    (name: string | number) => {
       const dataTree = getDataTree(store.getState());
       const entity = dataTree[name];
       if (!pageId) return;

@@ -195,7 +195,7 @@ export const useReflow = (
       if (shouldSkipContainerReflow) {
         if (shouldRegisterContainerTimeout) {
           // register a timeout method to trigger reflow if widget is not moved and is colliding with Droptargets
-          timeOutFunction.current = setTimeout(() => {
+          timeOutFunction.current = window.setTimeout(() => {
             //call reflow again
             const {
               collidingSpaceMap,

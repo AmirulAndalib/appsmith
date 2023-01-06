@@ -2,15 +2,16 @@ import { Property } from "entities/Action";
 import { Datasource } from "entities/Datasource";
 import {
   ApiDatasourceForm,
+  ApiKey,
   Authentication,
   AuthorizationCode,
   AuthType,
+  Basic,
+  BearerToken,
   ClientCredentials,
+  Connection,
   GrantType,
   Oauth2Common,
-  Basic,
-  ApiKey,
-  BearerToken,
   SSLType,
 } from "entities/Datasource/RestAPIForm";
 import _ from "lodash";
@@ -18,22 +19,27 @@ import _ from "lodash";
 export const datasourceToFormValues = (
   datasource: Datasource,
 ): ApiDatasourceForm => {
-  const authType = _.get(
-    datasource,
-    "datasourceConfiguration.authentication.authenticationType",
-    AuthType.NONE,
-  );
-  const connection = _.get(datasource, "datasourceConfiguration.connection", {
-    ssl: {
-      authType: SSLType.DEFAULT,
-    },
-  });
+  const authType: AuthType =
+    (_.get(
+      datasource,
+      "datasourceConfiguration.authentication.authenticationType",
+    ) as AuthType) || AuthType.NONE;
+  const connection: Connection =
+    ((_.get(
+      datasource,
+      "datasourceConfiguration.connection",
+    ) as unknown) as Connection) ||
+    (({
+      ssl: {
+        authType: SSLType.DEFAULT,
+      },
+    } as unknown) as Connection);
   const authentication = datasourceToFormAuthentication(authType, datasource);
   const isSendSessionEnabled =
     _.get(datasource, "datasourceConfiguration.properties[0].value", "N") ===
     "Y";
   const sessionSignatureKey = isSendSessionEnabled
-    ? _.get(datasource, "datasourceConfiguration.properties[1].value")
+    ? _.get(datasource, "datasourceConfiguration.properties[1].value") || ""
     : "";
   return {
     datasourceId: datasource.id,

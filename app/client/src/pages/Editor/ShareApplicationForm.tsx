@@ -81,5 +81,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 export default withRouter(
+  // @ts-expect-error type
   connect(mapStateToProps, mapDispatchToProps)(ShareApplicationForm),
 );

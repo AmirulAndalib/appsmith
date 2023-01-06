@@ -569,7 +569,7 @@ function AudioRecorderComponent(props: RecorderComponentProps) {
   const {
     clearBlobUrl,
     error,
-    mediaBlobUrl,
+    mediaBlobUrl = null,
     pauseRecording,
     resumeRecording,
     startRecording,
@@ -620,6 +620,7 @@ function AudioRecorderComponent(props: RecorderComponentProps) {
     setStatusMessage("Press to start recording");
     setIsClear(true);
     setIsReadyPlayerTimer(false);
+    // @ts-expect-error 0 is not a Date; but react-timer-hook expects 0 for reset.
     reset(0, false);
   };
 
@@ -684,6 +685,7 @@ function AudioRecorderComponent(props: RecorderComponentProps) {
   };
 
   const handleClearRecording = () => {
+    // @ts-expect-error 0 is not a Date; but react-timer-hook expects 0 for reset.
     reset(0, false);
     setIsReadyPlayerTimer(false);
     setPlayerStatus(PlayerStatusTypes.DEFAULT);
@@ -708,6 +710,7 @@ function AudioRecorderComponent(props: RecorderComponentProps) {
     setRecorderStatus(RecorderStatusTypes.DEFAULT);
     setStatusMessage("Press to start recording");
     setIsClear(true);
+    // @ts-expect-error 0 is not a Date; but react-timer-hook expects 0 for reset.
     reset(0, false);
     setIsReadyPlayerTimer(false);
   };

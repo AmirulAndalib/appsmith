@@ -261,6 +261,7 @@ export default function ModalComponent(props: ModalComponentProps) {
 
   const getEditorView = () => {
     return (
+      // @ts-expect-error type
       <Overlay
         autoFocus={false}
         canEscapeKeyClose={false}
@@ -287,19 +288,22 @@ export default function ModalComponent(props: ModalComponentProps) {
             props.zIndex !== undefined ? props.zIndex : Layers.modalWidget
           }
         >
-          <Overlay
-            autoFocus={false}
-            canEscapeKeyClose={props.canEscapeKeyClose}
-            canOutsideClickClose={props.canOutsideClickClose}
-            className={props.overlayClassName}
-            enforceFocus={false}
-            hasBackdrop
-            isOpen={props.isOpen}
-            onClose={props.onClose}
-            usePortal={false}
-          >
-            {getResizableContent()}
-          </Overlay>
+          {
+            // @ts-expect-error type
+            <Overlay
+              autoFocus={false}
+              canEscapeKeyClose={props.canEscapeKeyClose}
+              canOutsideClickClose={props.canOutsideClickClose}
+              className={props.overlayClassName}
+              enforceFocus={false}
+              hasBackdrop
+              isOpen={props.isOpen}
+              onClose={props.onClose}
+              usePortal={false}
+            >
+              {getResizableContent()}
+            </Overlay>
+          }
         </Container>
       </Overlay>
     );

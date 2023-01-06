@@ -110,7 +110,7 @@ export const StyledBottomLabel = styled.span`
 `;
 
 function SortingComponent(props: any) {
-  const formValues: any = useSelector((state) =>
+  const formValues: any = useSelector((state: object) =>
     getFormValues(props.formName)(state),
   );
 

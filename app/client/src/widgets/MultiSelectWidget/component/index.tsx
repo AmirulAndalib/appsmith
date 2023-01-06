@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Select, { SelectProps } from "rc-select";
-import { DraftValueType } from "rc-select/lib/Select";
+import { DraftValueType, FilterFunc } from "rc-select/lib/Select";
 import {
   DropdownStyles,
   MultiSelectContainer,
@@ -145,8 +145,8 @@ function MultiSelectComponent({
 
   // Convert the values to string before searching.
   // input is always a string.
-  const filterOption = useCallback(
-    (input, option) =>
+  const filterOption: FilterFunc<any> = useCallback(
+    (input: string, option: { props: { label: any; value: any } }) =>
       String(option?.props.label)
         .toLowerCase()
         .indexOf(input.toLowerCase()) >= 0 ||
@@ -156,7 +156,7 @@ function MultiSelectComponent({
     [],
   );
 
-  const onClose = useCallback((open) => !open && onFilterChange(""), []);
+  const onClose = useCallback((open: any) => !open && onFilterChange(""), []);
 
   const serverSideSearch = React.useMemo(() => {
     const updateFilter = (filterValue: string) => {

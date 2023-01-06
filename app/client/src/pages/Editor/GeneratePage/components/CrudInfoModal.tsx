@@ -177,7 +177,7 @@ function GenCRUDSuccessModal(props: Props) {
     getInfoImage();
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
+    const timerId = window.setTimeout(() => {
       setStep(STEP.SHOW_INFO);
     }, DELAY_TIME);
     return () => {

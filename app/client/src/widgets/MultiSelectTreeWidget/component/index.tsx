@@ -315,7 +315,7 @@ function MultiTreeSelectComponent({
           showCheckedStrategy={mode}
           showSearch={false}
           style={{ width: "100%" }}
-          switcherIcon={switcherIcon}
+          switcherIcon={(switcherIcon as unknown) as React.ReactNode}
           transitionName="rc-tree-select-dropdown-slide-up"
           treeCheckable={
             <span className={`rc-tree-select-tree-checkbox-inner`} />

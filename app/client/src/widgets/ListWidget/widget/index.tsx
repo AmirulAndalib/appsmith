@@ -13,7 +13,7 @@ import {
   isEmpty,
 } from "lodash";
 import memoizeOne from "memoize-one";
-import shallowEqual from "shallowequal";
+import { shallowEqual } from "shallowequal";
 import WidgetFactory from "utils/WidgetFactory";
 import { removeFalsyEntries } from "utils/helpers";
 import BaseWidget, { WidgetProps, WidgetState } from "widgets/BaseWidget";
@@ -118,7 +118,7 @@ class ListWidget extends BaseWidget<ListWidgetProps<WidgetProps>, WidgetState> {
         if (widgetType) {
           childrenEntityDefinitions[widgetType] = Object.keys(
             omit(
-              get(entityDefinitions, `${widgetType}`) as Record<
+              (get(entityDefinitions, `${widgetType}`) as unknown) as Record<
                 string,
                 unknown
               >,
@@ -861,10 +861,8 @@ class ListWidget extends BaseWidget<ListWidgetProps<WidgetProps>, WidgetState> {
     const { componentHeight } = this.getComponentDimensions();
     const { pageNo, serverSidePaginationEnabled } = this.props;
     const { perPage, shouldPaginate } = this.shouldPaginate();
-    const templateBottomRow = get(
-      this.props.childWidgets,
-      "0.children.0.bottomRow",
-    );
+    const templateBottomRow =
+      get(this.props.childWidgets, "0.children.0.bottomRow") || 1;
     const templateHeight =
       templateBottomRow * GridDefaults.DEFAULT_GRID_ROW_HEIGHT;
 

@@ -94,6 +94,7 @@ export const DeployLinkButton = (props: Props) => {
   };
 
   return (
+    // @ts-expect-error type
     <Popover
       canEscapeKeyClose={false}
       content={

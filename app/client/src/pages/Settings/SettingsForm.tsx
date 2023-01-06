@@ -240,6 +240,7 @@ const validate = (values: Record<string, any>) => {
 
 const selector = formValueSelector(SETTINGS_FORM_NAME);
 export default withRouter(
+  // @ts-expect-error type
   connect((state: AppState) => {
     const settingsConfig = getSettings(state);
     const newProps: any = {

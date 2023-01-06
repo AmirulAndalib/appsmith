@@ -170,6 +170,7 @@ export const PropertySection = memo((props: PropertySectionProps) => {
         )}
       </div>
       {props.children && (
+        // @ts-expect-error type
         <Collapse isOpen={isOpen} keepChildrenMounted transitionDuration={0}>
           <div
             className={`t--property-pane-section-${className}`}

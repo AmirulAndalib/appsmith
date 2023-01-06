@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { theme } from "constants/DefaultTheme";
 import { HelpIcons } from "icons/HelpIcons";
 import { getAppsmithConfigs } from "@appsmith/configs";
-import { LayersContext } from "constants/Layers";
+import { Layers, LayersContext } from "constants/Layers";
 import { connect } from "react-redux";
 import { AppState } from "@appsmith/reducers";
 import AnalyticsUtil from "utils/AnalyticsUtil";
@@ -113,7 +113,9 @@ class HelpModal extends React.Component<Props> {
 
   render() {
     const { isHelpModalOpen } = this.props;
-    const layers = this.context;
+    const layers = (this.context as unknown) as React.ContextType<
+      typeof LayersContext
+    >;
 
     return (
       <>

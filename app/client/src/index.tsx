@@ -1,17 +1,16 @@
 import React from "react";
+import { createRoot } from "react-dom/client";
 import "./wdyr";
-import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
+import { connect, Provider } from "react-redux";
 import "./index.css";
 import { ThemeProvider } from "styled-components";
 import { appInitializer } from "utils/AppUtils";
 import { Slide } from "react-toastify";
 import store, { runSagaMiddleware } from "./store";
-import { LayersContext, Layers } from "constants/Layers";
+import { Layers, LayersContext } from "constants/Layers";
 import AppRouter from "@appsmith/AppRouter";
 import * as Sentry from "@sentry/react";
 import { getCurrentThemeDetails } from "selectors/themeSelectors";
-import { connect } from "react-redux";
 import { AppState } from "@appsmith/reducers";
 import { StyledToastContainer } from "design-system-old";
 import "./assets/styles/index.css";
@@ -20,6 +19,7 @@ import GlobalStyles from "globalStyles";
 // enable autofreeze only in development
 import { setAutoFreeze } from "immer";
 import AppErrorBoundary from "AppErrorBoundry";
+
 const shouldAutoFreeze = process.env.NODE_ENV === "development";
 setAutoFreeze(shouldAutoFreeze);
 
@@ -29,7 +29,7 @@ appInitializer();
 
 function App() {
   return (
-    <Sentry.ErrorBoundary fallback={"An error has occured"}>
+    <Sentry.ErrorBoundary fallback={<div>An error has occurred</div>}>
       <Provider store={store}>
         <LayersContext.Provider value={Layers}>
           <ThemedAppWithProps />
@@ -44,6 +44,8 @@ class ThemedApp extends React.Component<{
 }> {
   render() {
     return (
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       <ThemeProvider theme={this.props.currentTheme}>
         <StyledToastContainer
           autoClose={5000}
@@ -61,13 +63,16 @@ class ThemedApp extends React.Component<{
     );
   }
 }
+
 const mapStateToProps = (state: AppState) => ({
   currentTheme: getCurrentThemeDetails(state),
 });
 
 const ThemedAppWithProps = connect(mapStateToProps)(ThemedApp);
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const container = document.getElementById("root");
+const root = createRoot(container as HTMLElement);
+root.render(<App />);
 
 // expose store when run in Cypress
 if ((window as any).Cypress) {

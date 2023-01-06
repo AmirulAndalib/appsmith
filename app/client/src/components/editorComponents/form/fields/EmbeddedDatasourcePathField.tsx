@@ -281,11 +281,11 @@ class EmbeddedDatasourcePathComponent extends React.Component<
 
   handleDatasourceHighlight = () => {
     const { datasource } = this.props;
-    const authType = get(
-      datasource,
-      "datasourceConfiguration.authentication.authenticationType",
-      "",
-    );
+    const authType: AuthType | string =
+      get(
+        datasource,
+        "datasourceConfiguration.authentication.authenticationType",
+      ) || "";
 
     const hasError = !get(datasource, "isValid", true);
 

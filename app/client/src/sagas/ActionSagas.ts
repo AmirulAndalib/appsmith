@@ -319,7 +319,6 @@ export function* updateActionSaga(
     /* NOTE: This  is fix for a missing command config */
     const plugin: Plugin | undefined = yield select(getPlugin, action.pluginId);
     if (action && plugin && plugin.packageName === PluginPackageName.MONGO) {
-      // @ts-expect-error: Types are not available
       action = fixActionPayloadForMongoQuery(action);
     }
     const response: ApiResponse<Action> = yield ActionAPI.updateAction(

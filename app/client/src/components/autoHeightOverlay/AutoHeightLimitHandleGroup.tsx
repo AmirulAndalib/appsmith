@@ -96,14 +96,14 @@ const AutoHeightLimitHandle = ({
       height={height}
       ref={ref}
       {...bindings}
-      onClick={(e) => {
+      onClick={(e: any) => {
         e.stopPropagation();
       }}
-      onDragStart={(e) => {
+      onDragStart={(e: any) => {
         e.preventDefault();
         e.stopPropagation();
       }}
-      onMouseDown={(e) => {
+      onMouseDown={(e: any) => {
         e.preventDefault();
         e.stopPropagation();
         bindings?.onMouseDown && bindings.onMouseDown(e);

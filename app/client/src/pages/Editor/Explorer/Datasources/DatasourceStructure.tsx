@@ -84,6 +84,7 @@ export function DatasourceStructure(props: DatasourceStructureProps) {
   const columnsAndKeys = dbStructure.columns.concat(dbStructure.keys);
 
   return (
+    // @ts-expect-error type
     <Popover
       boundary={"viewport"}
       canEscapeKeyClose

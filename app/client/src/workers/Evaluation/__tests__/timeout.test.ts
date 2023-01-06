@@ -10,7 +10,7 @@ describe("Expects appsmith setTimeout to pass the following criteria", () => {
   jest.spyOn(self, "setTimeout");
   self.postMessage = jest.fn();
   it("returns a number a timerId", () => {
-    const timerId = setTimeout(jest.fn(), 1000);
+    const timerId = window.setTimeout(jest.fn(), 1000);
     expect(timerId).toBeDefined();
     expect(typeof timerId).toBe("number");
   });
@@ -78,7 +78,7 @@ describe("Expects appsmith setTimeout to pass the following criteria", () => {
   });
   it("Checks the behavior of clearTimeout", () => {
     const cb = jest.fn();
-    const timerId = setTimeout(cb, 1000);
+    const timerId = window.setTimeout(cb, 1000);
     expect(cb.mock.calls.length).toBe(0);
     clearTimeout(timerId);
     jest.runAllTimers();

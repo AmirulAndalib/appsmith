@@ -20,6 +20,12 @@ import {
 import { AdditionalDynamicDataTree } from "utils/autocomplete/customTreeTypeDefCreator";
 import { ColumnProperties } from "widgets/TableWidgetV2/component/Constants";
 import { getUniqueKeysFromSourceData } from "widgets/MenuButtonWidget/widget/helper";
+import {
+  bindingMarker,
+  entityMarker,
+} from "../editorComponents/CodeEditor/markHelpers";
+import { bindingHint } from "../editorComponents/CodeEditor/hintHelpers";
+import { commandsHelper } from "../editorComponents/CodeEditor/commandsHelper";
 
 const PromptMessage = styled.span`
   line-height: 17px;
@@ -63,10 +69,12 @@ function InputText(props: InputTextProp) {
         dataTreePath={dataTreePath}
         evaluatedValue={evaluatedValue}
         expected={expected}
+        hinting={[bindingHint, commandsHelper]}
         input={{
           value: value,
           onChange: onChange,
         }}
+        marking={[bindingMarker, entityMarker]}
         mode={EditorModes.TEXT_WITH_BINDING}
         placeholder={placeholder}
         promptMessage={
@@ -166,7 +174,7 @@ class MenuButtonDynamicItemsControl extends BaseControl<
         } else if (${widgetName}.primaryColumns.${columnName}.sourceData.length) {
           primaryColumnData = ${widgetName}.primaryColumns.${columnName}.sourceData;
         }
-        
+
         return primaryColumnData.map((currentItem, currentIndex) => `;
     } else {
       return `{{${widgetName}.sourceData.map((currentItem, currentIndex) => ( `;

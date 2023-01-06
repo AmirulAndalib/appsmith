@@ -90,7 +90,7 @@ function GraphQLEditorForm(props: Props) {
   /**
    * Variable Editor's resizeable handler for the changing of width
    */
-  const onVariableEditorWidthChange = useCallback((newWidth) => {
+  const onVariableEditorWidthChange = useCallback((newWidth: number) => {
     setVariableEditorWidth(newWidth);
   }, []);
 

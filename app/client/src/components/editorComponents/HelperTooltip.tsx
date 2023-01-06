@@ -64,20 +64,23 @@ function HelperTooltip(props: Props) {
   return (
     <>
       <TooltipStyles />
-      <Popover
-        autoFocus
-        canEscapeKeyClose
-        content={props.description}
-        defaultIsOpen={false}
-        interactionKind={PopoverInteractionKind.HOVER}
-        portalClassName="helper-tooltip"
-        position="bottom"
-        usePortal
-      >
-        <IconContainer>
-          <props.rightIcon height={22} width={22} />
-        </IconContainer>
-      </Popover>
+      {
+        // @ts-expect-error type
+        <Popover
+          autoFocus
+          canEscapeKeyClose
+          content={props.description}
+          defaultIsOpen={false}
+          interactionKind={PopoverInteractionKind.HOVER}
+          portalClassName="helper-tooltip"
+          position="bottom"
+          usePortal
+        >
+          <IconContainer>
+            <props.rightIcon height={22} width={22} />
+          </IconContainer>
+        </Popover>
+      }
     </>
   );
 }

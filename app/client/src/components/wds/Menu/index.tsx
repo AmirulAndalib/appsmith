@@ -26,6 +26,7 @@ function Menu(props: Props) {
     );
 
   return (
+    // @ts-expect-error type
     <Popover content={menus} popoverClassName="Menu-v2" transitionDuration={-1}>
       {trigger}
     </Popover>

@@ -63,11 +63,14 @@ function CollapseComponent(props: {
           iconSize={12}
         />
       </div>
-      <Collapse isOpen={open} keepChildrenMounted>
-        <div className="inner-content">
-          {props.children ? props.children : null}
-        </div>
-      </Collapse>
+      {
+        // @ts-expect-error type
+        <Collapse isOpen={open} keepChildrenMounted>
+          <div className="inner-content">
+            {props.children ? props.children : null}
+          </div>
+        </Collapse>
+      }
     </CollapseWrapper>
   );
 }

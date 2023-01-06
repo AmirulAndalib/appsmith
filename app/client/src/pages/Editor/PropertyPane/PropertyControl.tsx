@@ -93,6 +93,7 @@ const PropertyControl = memo((props: Props) => {
       getShouldFocusPropertyPath(
         state,
         dataTreePath,
+        // @ts-expect-error args
         hasDispatchedPropertyFocus.current,
       ),
     (before: boolean, after: boolean) => {

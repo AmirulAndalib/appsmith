@@ -14,6 +14,9 @@ import {
   TabBehaviour,
   EditorModes,
 } from "./EditorConfig";
+import { bindingMarker, entityMarker } from "./markHelpers";
+import { bindingHint } from "./hintHelpers";
+import { commandsHelper } from "./commandsHelper";
 
 describe("<CodeEditor /> - Keyboard navigation", () => {
   // To avoid warning "Error: Not implemented: window.focus"
@@ -25,10 +28,12 @@ describe("<CodeEditor /> - Keyboard navigation", () => {
         <CodeEditor
           additionalDynamicData={{}}
           hideEvaluatedValue={false}
+          hinting={[bindingHint, commandsHelper]}
           input={{
             value: "",
             onChange: handleOnSelect,
           }}
+          marking={[bindingMarker, entityMarker]}
           mode={EditorModes.TEXT}
           size={EditorSize.COMPACT}
           tabBehaviour={TabBehaviour.INDENT}

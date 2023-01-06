@@ -245,8 +245,7 @@ function GitConnection({ isImport }: Props) {
   }, []);
 
   const stopShowingCopiedAfterDelay = () => {
-    // @ts-expect-error: setTimeout return type mismatch
-    timerRef.current = setTimeout(() => {
+    timerRef.current = window.setTimeout(() => {
       setShowCopied(false);
     }, 2000);
   };

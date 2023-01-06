@@ -67,7 +67,7 @@ function Collapsible(props: Props) {
     getDatasourceCollapsibleState(state, title),
   );
 
-  const setIsOpen = useCallback((open) => {
+  const setIsOpen = useCallback((open: any) => {
     dispatch(setDatasourceCollapsible(title, open));
   }, []);
 
@@ -103,10 +103,12 @@ function Collapsible(props: Props) {
           />
         </SectionContainer>
       )}
-
-      <Collapse isOpen={isOpen} keepChildrenMounted>
-        {children}
-      </Collapse>
+      {
+        // @ts-expect-error type
+        <Collapse isOpen={isOpen} keepChildrenMounted>
+          {children}
+        </Collapse>
+      }
     </section>
   );
 }

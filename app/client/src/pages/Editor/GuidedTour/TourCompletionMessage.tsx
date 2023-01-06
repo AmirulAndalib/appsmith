@@ -127,25 +127,28 @@ function CongratulationsView() {
           </Left>
           <RatingWrapper>
             <RatingText>{createMessage(RATING_TEXT)}</RatingText>
-            <Rating
-              emptySymbol={
-                <Icon
-                  className={"t--guided-tour-rating star"}
-                  fillColor={Colors.GREY_7}
-                  name="star-line"
-                  size={IconSize.XXXXL}
-                />
-              }
-              fullSymbol={
-                <Icon
-                  className={"t--guided-tour-rating star"}
-                  fillColor={"#FFCB45"}
-                  name="star-fill"
-                  size={IconSize.XXXXL}
-                />
-              }
-              onChange={onValueChanged}
-            />
+            {
+              // @ts-expect-error type
+              <Rating
+                emptySymbol={
+                  <Icon
+                    className={"t--guided-tour-rating star"}
+                    fillColor={Colors.GREY_7}
+                    name="star-line"
+                    size={IconSize.XXXXL}
+                  />
+                }
+                fullSymbol={
+                  <Icon
+                    className={"t--guided-tour-rating star"}
+                    fillColor={"#FFCB45"}
+                    name="star-fill"
+                    size={IconSize.XXXXL}
+                  />
+                }
+                onChange={onValueChanged}
+              />
+            }
           </RatingWrapper>
         </Wrapper>
       </Container>

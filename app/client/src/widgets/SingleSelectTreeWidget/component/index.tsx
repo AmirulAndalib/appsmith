@@ -318,7 +318,7 @@ function SingleSelectTreeComponent({
           showArrow
           showSearch={false}
           style={{ width: "100%" }}
-          switcherIcon={switcherIcon}
+          switcherIcon={(switcherIcon as unknown) as React.ReactNode}
           transitionName="rc-tree-select-dropdown-slide-up"
           treeData={options}
           treeDefaultExpandAll={expandAll}

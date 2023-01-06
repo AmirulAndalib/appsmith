@@ -235,7 +235,7 @@ export default function ContextualMenu(props: ContextualMenuProps) {
       className="t--debugger-contextual-error-menu"
       content={
         <MenuWrapper width={"264px"}>
-          {options.map((e) => {
+          {options.map((e: CONTEXT_MENU_ACTIONS) => {
             const menuProps = searchAction[e];
             const onSelect = () => {
               menuProps.onSelect(props.error, dispatch, props.entity);

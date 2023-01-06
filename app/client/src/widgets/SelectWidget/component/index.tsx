@@ -358,68 +358,70 @@ class SelectComponent extends React.Component<
           $labelPosition={labelPosition}
           fill
         >
-          <StyledSingleDropDown
-            accentColor={accentColor}
-            activeItem={activeItem()}
-            borderRadius={borderRadius}
-            boxShadow={boxShadow}
-            className={isLoading ? Classes.SKELETON : ""}
-            disabled={disabled}
-            filterable={this.props.isFilterable}
-            hasError={this.props.hasError}
-            isValid={this.props.isValid}
-            itemListPredicate={
-              !this.props.serverSideFiltering
-                ? this.itemListPredicate
-                : undefined
-            }
-            itemListRenderer={this.itemListRenderer}
-            itemRenderer={this.renderSingleSelectItem}
-            items={this.props.options}
-            noResults={this.noResultsUI}
-            onActiveItemChange={this.handleActiveItemChange}
-            onItemSelect={this.onItemSelect}
-            onQueryChange={this.onQueryChange}
-            popoverProps={{
-              portalContainer:
-                document.getElementById("art-board") || undefined,
-              boundary: "window",
-              isOpen: this.state.isOpen,
-              minimal: true,
-              usePortal: true,
-              onClose: this.handleCloseList,
-              // onActiveItemChange is called twice abd puts the focus on the first item https://github.com/palantir/blueprint/issues/4192
-              onOpening: () => {
-                if (!this.props.selectedIndex) {
-                  return this.handleActiveItemChange(null);
-                }
-                return this.handleActiveItemChange(
-                  this.props.options[this.props.selectedIndex],
-                );
-              },
-              modifiers: {
-                preventOverflow: {
-                  enabled: false,
-                },
-              },
-              popoverClassName: `select-popover-wrapper select-popover-width-${this.props.widgetId}`,
-            }}
-            query={this.props.filterText}
-            resetOnClose={this.props.resetFilterTextOnClose}
-            scrollToActiveItem
-            value={this.props.value as string}
-          >
-            <SelectButton
+          {
+            <StyledSingleDropDown
+              accentColor={accentColor}
+              activeItem={activeItem()}
+              borderRadius={borderRadius}
+              boxShadow={boxShadow}
+              className={isLoading ? Classes.SKELETON : ""}
               disabled={disabled}
-              displayText={value.toString()}
-              handleCancelClick={this.handleCancelClick}
-              hideCancelIcon={this.props.hideCancelIcon}
-              spanRef={this.spanRef}
-              togglePopoverVisibility={this.togglePopoverVisibility}
-              tooltipText={tooltipText}
-              value={this.props.value?.toString()}
-            />
-          </StyledSingleDropDown>
+              filterable={this.props.isFilterable}
+              hasError={this.props.hasError}
+              isValid={this.props.isValid}
+              itemListPredicate={
+                !this.props.serverSideFiltering
+                  ? this.itemListPredicate
+                  : undefined
+              }
+              itemListRenderer={this.itemListRenderer}
+              itemRenderer={this.renderSingleSelectItem}
+              items={this.props.options}
+              noResults={this.noResultsUI}
+              onActiveItemChange={this.handleActiveItemChange}
+              onItemSelect={this.onItemSelect}
+              onQueryChange={this.onQueryChange}
+              popoverProps={{
+                portalContainer:
+                  document.getElementById("art-board") || undefined,
+                boundary: "window",
+                isOpen: this.state.isOpen,
+                minimal: true,
+                usePortal: true,
+                onClose: this.handleCloseList,
+                // onActiveItemChange is called twice abd puts the focus on the first item https://github.com/palantir/blueprint/issues/4192
+                onOpening: () => {
+                  if (!this.props.selectedIndex) {
+                    return this.handleActiveItemChange(null);
+                  }
+                  return this.handleActiveItemChange(
+                    this.props.options[this.props.selectedIndex],
+                  );
+                },
+                modifiers: {
+                  preventOverflow: {
+                    enabled: false,
+                  },
+                },
+                popoverClassName: `select-popover-wrapper select-popover-width-${this.props.widgetId}`,
+              }}
+              query={this.props.filterText}
+              resetOnClose={this.props.resetFilterTextOnClose}
+              scrollToActiveItem
+              value={this.props.value as string}
+            >
+              <SelectButton
+                disabled={disabled}
+                displayText={value.toString()}
+                handleCancelClick={this.handleCancelClick}
+                hideCancelIcon={this.props.hideCancelIcon}
+                spanRef={this.spanRef}
+                togglePopoverVisibility={this.togglePopoverVisibility}
+                tooltipText={tooltipText}
+                value={this.props.value?.toString()}
+              />
+            </StyledSingleDropDown>
+          }
         </StyledControlGroup>
       </DropdownContainer>
     );

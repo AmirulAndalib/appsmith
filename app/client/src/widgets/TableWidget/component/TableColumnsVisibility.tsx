@@ -105,6 +105,7 @@ function TableColumnsVisibility(props: TableColumnsVisibilityProps) {
     },
   );
   return (
+    // @ts-expect-error type
     <Popover
       enforceFocus={false}
       interactionKind={PopoverInteractionKind.CLICK}

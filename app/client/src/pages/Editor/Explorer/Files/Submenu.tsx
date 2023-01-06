@@ -116,7 +116,7 @@ export default function ExplorerSubMenu({
     });
   }, [filteredFileOperations]);
 
-  const onChange = useCallback((e) => {
+  const onChange = useCallback((e: any) => {
     setQuery(e.target.value);
   }, []);
 

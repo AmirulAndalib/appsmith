@@ -95,7 +95,7 @@ export default function Group({
   settings,
   subCategory,
 }: GroupProps) {
-  const state = useSelector((state) => state);
+  const state = (useSelector((state) => state) as unknown) as object;
   const calloutDispatch = useDispatch();
 
   return (

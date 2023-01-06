@@ -77,6 +77,12 @@ import {
 } from "actions/editorContextActions";
 import history from "utils/history";
 import { CursorPositionOrigin } from "reducers/uiReducers/editorContextReducer";
+import {
+  bindingMarker,
+  entityMarker,
+} from "../../../components/editorComponents/CodeEditor/markHelpers";
+import { bindingHint } from "../../../components/editorComponents/CodeEditor/hintHelpers";
+import { commandsHelper } from "../../../components/editorComponents/CodeEditor/commandsHelper";
 
 interface JSFormProps {
   jsCollection: JSCollection;
@@ -349,11 +355,13 @@ function JSEditorForm({ jsCollection: currentJSCollection }: Props) {
                         folding
                         height={"100%"}
                         hideEvaluatedValue
+                        hinting={[bindingHint, commandsHelper]}
                         input={{
                           value: currentJSCollection.body,
                           onChange: handleEditorChange,
                         }}
                         isJSObject
+                        marking={[bindingMarker, entityMarker]}
                         mode={EditorModes.JAVASCRIPT}
                         placeholder="Let's write some code!"
                         showLightningMenu={false}

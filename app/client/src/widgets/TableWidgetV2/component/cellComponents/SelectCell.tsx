@@ -185,7 +185,10 @@ export const SelectCell = (props: SelectProps) => {
     [toggleCellEditMode, rowIndex, alias, value],
   );
 
-  const onClick = useCallback((e) => e.stopPropagation(), []);
+  const onClick = useCallback(
+    (e: { stopPropagation: () => any }) => e.stopPropagation(),
+    [],
+  );
 
   const selectedIndex = (Array.isArray(options) ? options : [])
     .filter((d: DropdownOption) => d)

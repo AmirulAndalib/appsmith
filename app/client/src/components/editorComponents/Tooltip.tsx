@@ -1,2 +1,2 @@
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 export default Tooltip;

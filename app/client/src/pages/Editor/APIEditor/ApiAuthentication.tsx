@@ -101,7 +101,8 @@ function ApiAuthentication(props: Props): JSX.Element {
 
   return (
     <AuthContainer>
-      {authType === AuthType.OAuth2 && <OAuthLabel hasError={hasError} />}
+      {// @ts-expect-error type
+      authType === AuthType.OAuth2 && <OAuthLabel hasError={hasError} />}
       <DescriptionText type={TextType.P1}>
         {shouldSave
           ? createMessage(SAVE_DATASOURCE_MESSAGE)

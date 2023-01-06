@@ -154,15 +154,18 @@ function RateComponent(props: RateComponentProps) {
       readonly={readonly}
       ref={rateContainerRef}
     >
-      <Rating
-        emptySymbol={renderStarsWithTooltip(props, false)}
-        fractions={isAllowHalf ? 2 : 1}
-        fullSymbol={renderStarsWithTooltip(props, true)}
-        initialRating={value}
-        onChange={onValueChanged}
-        readonly={readonly}
-        stop={maxCount}
-      />
+      {
+        // @ts-expect-error type
+        <Rating
+          emptySymbol={renderStarsWithTooltip(props, false)}
+          fractions={isAllowHalf ? 2 : 1}
+          fullSymbol={renderStarsWithTooltip(props, true)}
+          initialRating={value}
+          onChange={onValueChanged}
+          readonly={readonly}
+          stop={maxCount}
+        />
+      }
     </RateContainer>
   );
 }

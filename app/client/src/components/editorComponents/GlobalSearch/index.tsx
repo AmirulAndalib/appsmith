@@ -225,10 +225,13 @@ function GlobalSearch() {
   ] = useState<Array<DocSearchItem>>([]);
 
   const [activeItemIndex, setActiveItemIndexInState] = useState(0);
-  const setActiveItemIndex = useCallback((index) => {
-    scrollPositionRef.current = 0;
-    setActiveItemIndexInState(index);
-  }, []);
+  const setActiveItemIndex = useCallback(
+    (index: React.SetStateAction<number>) => {
+      scrollPositionRef.current = 0;
+      setActiveItemIndexInState(index);
+    },
+    [],
+  );
 
   useEffect(() => {
     setTimeout(() => document.getElementById("global-search")?.focus());
@@ -266,7 +269,13 @@ function GlobalSearch() {
     .map((r) => getEntityId(r))
     .filter(Boolean);
   const recentEntityIndex = useCallback(
-    (entity) => {
+    (entity: {
+      kind: SEARCH_ITEM_TYPES;
+      id: any;
+      widgetId: any;
+      config: { id: any };
+      pageId: any;
+    }) => {
       if (entity.kind === SEARCH_ITEM_TYPES.document) return -1;
       const id =
         entity.id || entity.widgetId || entity.config?.id || entity.pageId;

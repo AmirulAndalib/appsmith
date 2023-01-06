@@ -180,7 +180,7 @@ export class JSONtoForm<
         if (checked[properties[0]]) continue;
 
         checked[properties[0]] = 1;
-        const values = _.get(formData, properties[0], []);
+        const values = (_.get(formData, properties[0], []) as unknown) as any[];
         const newValues: ({ [s: string]: unknown } | ArrayLike<unknown>)[] = [];
 
         values.forEach(

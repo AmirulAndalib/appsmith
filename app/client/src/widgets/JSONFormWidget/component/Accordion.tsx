@@ -114,9 +114,12 @@ function Accordion({
           <StyledToggleHeaderText>{title}</StyledToggleHeaderText>
         </StyledToggleHeader>
       )}
-      <Collapse isOpen={isOpen} keepChildrenMounted>
-        {children}
-      </Collapse>
+      {
+        // @ts-expect-error type
+        <Collapse isOpen={isOpen} keepChildrenMounted>
+          {children}
+        </Collapse>
+      }
     </StyledWrapper>
   );
 }

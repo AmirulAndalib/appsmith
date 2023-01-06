@@ -80,6 +80,7 @@ function HelpButton() {
   }, []);
 
   return (
+    // @ts-expect-error type
     <Popover
       minimal
       modifiers={{

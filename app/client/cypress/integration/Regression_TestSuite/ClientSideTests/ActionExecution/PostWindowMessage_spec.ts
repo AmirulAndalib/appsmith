@@ -33,7 +33,7 @@ describe("Post window message", () => {
       function sendMsg() {
       window.parent.postMessage("got msg", "*");
       }
-      window.addEventListener("message", (e) => {
+      window.addEventListener("message", (e: any) => {
 			 document.querySelector('#txtMsg').innerHTML = e.data;
       });
       </script>

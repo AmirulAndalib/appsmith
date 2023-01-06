@@ -371,7 +371,7 @@ export function Table(props: TableProps) {
                     {...rowProps}
                     className={"tr" + `${isRowSelected ? " selected-row" : ""}`}
                     key={rowIndex}
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       row.toggleRowSelected();
                       props.selectTableRow(row);
                       e.stopPropagation();

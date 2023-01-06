@@ -1,0 +1,53 @@
+diff --git a/node_modules/@blueprintjs/core/lib/esm/components/popover/popover.js b/node_modules/@blueprintjs/core/lib/esm/components/popover/popover.js
+index d89be28..2e04339 100644
+--- a/node_modules/@blueprintjs/core/lib/esm/components/popover/popover.js
++++ b/node_modules/@blueprintjs/core/lib/esm/components/popover/popover.js
+@@ -168,6 +168,8 @@ var Popover = /** @class */ (function (_super) {
+                 // close the popover if necessary.
+                 if (e.relatedTarget != null && !_this.isElementInPopover(e.relatedTarget)) {
+                     _this.handleMouseLeave(e);
++                } else if(e.relatedTarget === null) {
++                    _this.handleMouseLeave(e);
+                 }
+             }
+             _this.lostFocusOnSamePage = e.relatedTarget != null;
+diff --git a/node_modules/@blueprintjs/core/lib/esm/components/tooltip/tooltip.d.ts b/node_modules/@blueprintjs/core/lib/esm/components/tooltip/tooltip.d.ts
+index 94f4af9..1cc6f18 100644
+--- a/node_modules/@blueprintjs/core/lib/esm/components/tooltip/tooltip.d.ts
++++ b/node_modules/@blueprintjs/core/lib/esm/components/tooltip/tooltip.d.ts
+@@ -3,7 +3,8 @@ import { AbstractPureComponent2 } from "../../common";
+ import { IntentProps } from "../../common/props";
+ import { PopoverInteractionKind } from "../popover/popover";
+ import { IPopoverSharedProps } from "../popover/popoverSharedProps";
+-export declare type TooltipProps = ITooltipProps;
++import { PropsWithChildren } from "react";
++export declare type TooltipProps = PropsWithChildren<ITooltipProps>;
+ /** @deprecated use TooltipProps */
+ export interface ITooltipProps extends IPopoverSharedProps, IntentProps {
+     /**
+diff --git a/node_modules/@blueprintjs/core/src/components/collapse/collapse.tsx b/node_modules/@blueprintjs/core/src/components/collapse/collapse.tsx
+index 74e770b..5f44a86 100644
+--- a/node_modules/@blueprintjs/core/src/components/collapse/collapse.tsx
++++ b/node_modules/@blueprintjs/core/src/components/collapse/collapse.tsx
+@@ -118,7 +118,7 @@ export enum AnimationStates {
+ }
+ 
+ @polyfill
+-export class Collapse extends AbstractPureComponent2<CollapseProps, ICollapseState> {
++export class Collapse extends AbstractPureComponent2<React.PropsWithChildren<CollapseProps>, ICollapseState> {
+     public static displayName = `${DISPLAYNAME_PREFIX}.Collapse`;
+ 
+     public static defaultProps: CollapseProps = {
+diff --git a/node_modules/@blueprintjs/core/src/tsconfig.json b/node_modules/@blueprintjs/core/src/tsconfig.json
+index b4fa367..029a89b 100644
+--- a/node_modules/@blueprintjs/core/src/tsconfig.json
++++ b/node_modules/@blueprintjs/core/src/tsconfig.json
+@@ -1,6 +1,8 @@
+ {
+     "extends": "../../../config/tsconfig.base",
+     "compilerOptions": {
++        "experimentalDecorators": true,
++        "experimentalDecorators": true,
+         "outDir": "../lib/esm"
+     }
+ }

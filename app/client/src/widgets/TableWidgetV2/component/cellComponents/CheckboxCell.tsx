@@ -9,7 +9,7 @@ import { CellWrapper, TooltipContentWrapper } from "../TableStyledWrappers";
 import CheckboxComponent from "widgets/CheckboxWidget/component/index";
 import { LabelPosition } from "components/constants";
 import styled from "styled-components";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 
 const UnsavedChangesMarker = styled.div<{ accentColor: string }>`
   position: absolute;

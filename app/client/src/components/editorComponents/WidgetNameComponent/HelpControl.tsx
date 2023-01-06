@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 import styled from "styled-components";
 import { ControlIcons } from "icons/ControlIcons";
 import { Colors } from "constants/Colors";

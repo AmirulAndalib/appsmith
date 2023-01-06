@@ -1,5 +1,5 @@
 import React from "react";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 import { IconWrapper } from "constants/IconConstants";
 import { Colors } from "constants/Colors";
 import { TableIconWrapper } from "./TableStyledWrappers";
@@ -27,7 +27,7 @@ function TableActionIcon(props: TableActionIconProps) {
     >
       <TableIconWrapper
         className={props.className}
-        onClick={(e) => {
+        onClick={(e: any) => {
           props.selectMenu(!props.selected);
           e.stopPropagation();
         }}

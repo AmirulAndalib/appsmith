@@ -206,40 +206,43 @@ function TableDataDownload(props: TableDataDownloadProps) {
   }
   return (
     <>
-      <Popover
-        enforceFocus={false}
-        interactionKind={PopoverInteractionKind.CLICK}
-        isOpen={selected}
-        minimal
-        onClose={handleCloseMenu}
-        popoverClassName="table-download-popover"
-        position={Position.BOTTOM}
-      >
-        <ActionItem
-          borderRadius={props.borderRadius}
-          className="t--table-download-btn"
-          icon="download"
-          selectMenu={selectMenu}
-          selected={selected}
-          title="Download"
-          width={16}
-        />
-        <DropDownWrapper>
-          {dowloadOptions.map((item: DownloadOptionProps, index: number) => {
-            return (
-              <OptionWrapper
-                className={`${Classes.POPOVER_DISMISS} t--table-download-data-option`}
-                key={index}
-                onClick={() => {
-                  downloadFile(item.value);
-                }}
-              >
-                {item.label}
-              </OptionWrapper>
-            );
-          })}
-        </DropDownWrapper>
-      </Popover>
+      {
+        // @ts-expect-error type
+        <Popover
+          enforceFocus={false}
+          interactionKind={PopoverInteractionKind.CLICK}
+          isOpen={selected}
+          minimal
+          onClose={handleCloseMenu}
+          popoverClassName="table-download-popover"
+          position={Position.BOTTOM}
+        >
+          <ActionItem
+            borderRadius={props.borderRadius}
+            className="t--table-download-btn"
+            icon="download"
+            selectMenu={selectMenu}
+            selected={selected}
+            title="Download"
+            width={16}
+          />
+          <DropDownWrapper>
+            {dowloadOptions.map((item: DownloadOptionProps, index: number) => {
+              return (
+                <OptionWrapper
+                  className={`${Classes.POPOVER_DISMISS} t--table-download-data-option`}
+                  key={index}
+                  onClick={() => {
+                    downloadFile(item.value);
+                  }}
+                >
+                  {item.label}
+                </OptionWrapper>
+              );
+            })}
+          </DropDownWrapper>
+        </Popover>
+      }
       <PopoverStyles
         borderRadius={props.borderRadius}
         id="table-download-popover"

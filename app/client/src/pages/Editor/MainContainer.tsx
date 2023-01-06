@@ -39,7 +39,7 @@ function MainContainer() {
    *
    * @return void
    */
-  const onLeftSidebarWidthChange = useCallback((newWidth) => {
+  const onLeftSidebarWidthChange = useCallback((newWidth: number) => {
     dispatch(updateExplorerWidthAction(newWidth));
   }, []);
 

@@ -166,7 +166,7 @@ function TabsComponent(props: TabsComponentProps) {
   }, [tabsRef.current, tabs]);
 
   const measuredTabsRef = useCallback(
-    (node) => {
+    (node: HTMLElement | null) => {
       tabsRef.current = node;
       if (node !== null) {
         const { offsetWidth, scrollWidth } = node;
@@ -178,7 +178,7 @@ function TabsComponent(props: TabsComponentProps) {
   );
 
   const scroll = useCallback(
-    (isScrollingLeft) => {
+    (isScrollingLeft: any) => {
       const currentOffset = tabsRef.current?.scrollLeft || 0;
 
       if (tabsRef.current) {

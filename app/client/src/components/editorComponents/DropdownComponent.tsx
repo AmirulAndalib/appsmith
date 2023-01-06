@@ -190,6 +190,7 @@ class DropdownComponent extends Component<
     const { autocomplete, height, options, width } = this.props;
 
     return (
+      // @ts-expect-error type
       <Dropdown
         activeItem={this.getActiveOption()}
         filterable={!!autocomplete}

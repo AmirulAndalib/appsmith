@@ -90,26 +90,29 @@ function GitErrorPopup() {
 
   return (
     <StyledGitErrorPopup>
-      <Overlay
-        hasBackdrop
-        isOpen={isGitErrorPopupVisible}
-        onClose={hidePopup}
-        transitionDuration={25}
-        usePortal={false}
-      >
-        <div className={Classes.OVERLAY_CONTENT}>
-          <div className="git-error-popup">
-            <Header closePopup={hidePopup} />
-            <Space size={2} />
-            {isConflicting && (
-              <ConflictInfo
-                browserSupportedRemoteUrl={browserSupportedRemoteUrl}
-                learnMoreLink={gitConflictDocumentUrl}
-              />
-            )}
+      {
+        // @ts-expect-error type
+        <Overlay
+          hasBackdrop
+          isOpen={isGitErrorPopupVisible}
+          onClose={hidePopup}
+          transitionDuration={25}
+          usePortal={false}
+        >
+          <div className={Classes.OVERLAY_CONTENT}>
+            <div className="git-error-popup">
+              <Header closePopup={hidePopup} />
+              <Space size={2} />
+              {isConflicting && (
+                <ConflictInfo
+                  browserSupportedRemoteUrl={browserSupportedRemoteUrl}
+                  learnMoreLink={gitConflictDocumentUrl}
+                />
+              )}
+            </div>
           </div>
-        </div>
-      </Overlay>
+        </Overlay>
+      }
     </StyledGitErrorPopup>
   );
 }

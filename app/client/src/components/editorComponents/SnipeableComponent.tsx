@@ -54,7 +54,7 @@ function SnipeableComponent(props: SnipeableComponentProps) {
   const className = `${classNameForTesting}`;
 
   const onSelectWidgetToBind = useCallback(
-    (e) => {
+    (e: { stopPropagation: () => void }) => {
       dispatch(
         bindDataToWidget({
           widgetId: props.widgetId,

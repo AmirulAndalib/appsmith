@@ -13,6 +13,9 @@ import {
   TabBehaviour,
   EditorModes,
 } from "./EditorConfig";
+import { bindingMarker, entityMarker } from "./markHelpers";
+import { bindingHint } from "./hintHelpers";
+import { commandsHelper } from "./commandsHelper";
 
 describe("CodeEditor", () => {
   it("should check EvaluatedValuePopup's hideEvaluatedValue  is false when hideEvaluatedValue is passed as false to codeditor", () => {
@@ -20,20 +23,23 @@ describe("CodeEditor", () => {
     const testRenderer = TestRenderer.create(
       <Provider store={store}>
         <ThemeProvider theme={finalTheme}>
-          <CodeEditor
-            additionalDynamicData={{}}
-            hideEvaluatedValue={false}
-            input={{
-              value: "",
-              onChange: () => {
-                //
-              },
-            }}
-            mode={EditorModes.TEXT}
-            size={EditorSize.COMPACT}
-            tabBehaviour={TabBehaviour.INDENT}
-            theme={EditorTheme.LIGHT}
-          />
+          {
+            // @ts-expect-error type
+            <CodeEditor
+              additionalDynamicData={{}}
+              hideEvaluatedValue={false}
+              input={{
+                value: "",
+                onChange: () => {
+                  //
+                },
+              }}
+              mode={EditorModes.TEXT}
+              size={EditorSize.COMPACT}
+              tabBehaviour={TabBehaviour.INDENT}
+              theme={EditorTheme.LIGHT}
+            />
+          }
         </ThemeProvider>
       </Provider>,
     );
@@ -51,12 +57,14 @@ describe("CodeEditor", () => {
           <CodeEditor
             additionalDynamicData={{}}
             hideEvaluatedValue
+            hinting={[bindingHint, commandsHelper]}
             input={{
               value: "",
               onChange: () => {
                 //
               },
             }}
+            marking={[bindingMarker, entityMarker]}
             mode={EditorModes.TEXT}
             size={EditorSize.COMPACT}
             tabBehaviour={TabBehaviour.INDENT}

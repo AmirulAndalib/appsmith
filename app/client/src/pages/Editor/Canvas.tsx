@@ -112,7 +112,7 @@ const Canvas = memo((props: CanvasProps) => {
         className="relative mx-auto t--canvas-artboard pb-52"
         data-testid="t--canvas-artboard"
         id="art-board"
-        onMouseMove={(e) => {
+        onMouseMove={(e: any) => {
           if (!isMultiplayerEnabledForUser) return;
           const data = getPointerData(
             e,

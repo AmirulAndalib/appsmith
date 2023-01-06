@@ -143,7 +143,7 @@ export function EditableText(props: EditableTextProps) {
   const [value, setStateValue] = useState(defaultValue);
   const inputValRef = useRef("");
 
-  const setValue = useCallback((value) => {
+  const setValue = useCallback((value: string) => {
     inputValRef.current = value;
     setStateValue(value);
   }, []);

@@ -147,7 +147,7 @@ export default function XlsxViewer(props: { blob?: Blob }) {
 
   // when user click on another sheet, re-generate data
   const updateSheet = useCallback(
-    (sheetId) => () => {
+    (sheetId: number) => () => {
       getSheetData(sheetId);
     },
     [],

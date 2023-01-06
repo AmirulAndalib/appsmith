@@ -73,7 +73,7 @@ function PageNumberInput(props: {
     setPageNumber(props.pageNo || 0);
   }, [props.pageNo]);
   const handleUpdatePageNo = useCallback(
-    (e) => {
+    (e: any) => {
       const oldPageNo = Number(props.pageNo || 0);
       let page = Number(e.target.value);
       // check page is less then min page count

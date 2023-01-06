@@ -6,6 +6,7 @@ import { ReactComponent as CloseFilterIcon } from "assets/icons/menu/close-filte
 import AnalyticsUtil from "utils/AnalyticsUtil";
 import { getSnippetFilterLabel } from "./utils";
 import { useStore } from "react-redux";
+import { AppState } from "@appsmith/reducers";
 
 const SnippetsFilterContainer = styled.div<{
   showFilter: boolean;
@@ -73,7 +74,7 @@ const SnippetsFilterContainer = styled.div<{
       justify-content: center;
       .ais-ClearRefinements-button {
         width: auto;
-        border-radius: none;
+        border-radius: initial;
         box-shadow: unset;
         cursor: pointer;
         color: ${(props) => props.theme.colors.globalSearch.searchInputBorder};
@@ -149,7 +150,7 @@ function SnippetsFilter({ refinements, snippetsEmpty }: any) {
     (items: any) =>
       items.map((item: any) => ({
         ...item,
-        label: getSnippetFilterLabel(store.getState(), item.label),
+        label: getSnippetFilterLabel(store.getState() as AppState, item.label),
       })),
     [store, getSnippetFilterLabel],
   );

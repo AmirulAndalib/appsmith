@@ -436,55 +436,57 @@ class ProviderTemplates extends React.Component<ProviderTemplatesProps> {
                       />
                     </TemplateCardRightContent>
                   </CardTopContent>
-
-                  <Collapse
-                    isOpen={this.state.toggeledTemplates.includes(
-                      template.templateData.id,
-                    )}
-                    transitionDuration={0}
-                  >
-                    <ReactJson
-                      displayDataTypes={false}
-                      displayObjectSize={false}
-                      enableClipboard={false}
-                      name="Request header"
-                      src={template.templateData.actionConfiguration.headers}
-                      style={{
-                        marginTop: "12px",
-                        fontSize: "14px",
-                        padding: "15px",
-                        borderTopLeftRadius: "4px",
-                        borderTopRightRadius: "4px",
-                        width: "90%",
-                        wordWrap: "break-word",
-                      }}
-                      theme="grayscale"
-                    />
-                    {template.templateData.apiTemplateConfiguration
-                      .sampleResponse ? (
+                  {
+                    // @ts-expect-error type
+                    <Collapse
+                      isOpen={this.state.toggeledTemplates.includes(
+                        template.templateData.id,
+                      )}
+                      transitionDuration={0}
+                    >
                       <ReactJson
                         displayDataTypes={false}
                         displayObjectSize={false}
                         enableClipboard={false}
-                        name="Response Body"
-                        src={
-                          template.templateData.apiTemplateConfiguration
-                            .sampleResponse
-                        }
+                        name="Request header"
+                        src={template.templateData.actionConfiguration.headers}
                         style={{
+                          marginTop: "12px",
                           fontSize: "14px",
                           padding: "15px",
-                          borderBottomLeftRadius: "4px",
-                          borderBottomRightRadius: "4px",
-                          maxWidth: "90%",
+                          borderTopLeftRadius: "4px",
+                          borderTopRightRadius: "4px",
+                          width: "90%",
                           wordWrap: "break-word",
                         }}
                         theme="grayscale"
                       />
-                    ) : (
-                      <p />
-                    )}
-                  </Collapse>
+                      {template.templateData.apiTemplateConfiguration
+                        .sampleResponse ? (
+                        <ReactJson
+                          displayDataTypes={false}
+                          displayObjectSize={false}
+                          enableClipboard={false}
+                          name="Response Body"
+                          src={
+                            template.templateData.apiTemplateConfiguration
+                              .sampleResponse
+                          }
+                          style={{
+                            fontSize: "14px",
+                            padding: "15px",
+                            borderBottomLeftRadius: "4px",
+                            borderBottomRightRadius: "4px",
+                            maxWidth: "90%",
+                            wordWrap: "break-word",
+                          }}
+                          theme="grayscale"
+                        />
+                      ) : (
+                        <p />
+                      )}
+                    </Collapse>
+                  }
                 </TemplateCard>
               ))}
             </>

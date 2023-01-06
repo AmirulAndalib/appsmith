@@ -370,7 +370,7 @@ function MenuButtonTableComponent(props: MenuButtonComponentProps) {
 
   return (
     <MenuButtonContainer
-      onClick={(e) => {
+      onClick={(e: any) => {
         //Stop propagating event so selectedRow will remain unchanged
         e.stopPropagation();
       }}

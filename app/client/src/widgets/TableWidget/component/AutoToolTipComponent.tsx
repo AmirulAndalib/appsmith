@@ -1,5 +1,5 @@
 import React, { createRef, memo, useEffect, useState } from "react";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 import { CellWrapper, ColumnWrapper } from "./TableStyledWrappers";
 import { CellLayoutProperties, ColumnTypes } from "./Constants";
 import { ReactComponent as OpenNewTabIcon } from "assets/icons/control/open-new-tab.svg";

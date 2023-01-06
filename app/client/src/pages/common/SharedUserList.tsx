@@ -81,6 +81,7 @@ export default function SharedUserList(props: any) {
   return (
     <UserImageContainer isMobile={isMobile}>
       {allUsers.slice(0, 5).map((el: WorkspaceUser) => (
+        // @ts-expect-error type
         <Popover
           boundary="viewport"
           hoverCloseDelay={100}
@@ -102,6 +103,7 @@ export default function SharedUserList(props: any) {
         </Popover>
       ))}
       {allUsers.length > 5 ? (
+        // @ts-expect-error type
         <Popover
           hoverCloseDelay={0}
           interactionKind={PopoverInteractionKind.CLICK}

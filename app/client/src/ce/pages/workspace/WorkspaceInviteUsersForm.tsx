@@ -62,7 +62,7 @@ import UserApi from "@appsmith/api/UserApi";
 import { Colors } from "constants/Colors";
 import { fetchWorkspace } from "@appsmith/actions/workspaceActions";
 import { useHistory } from "react-router-dom";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 import { isEllipsisActive } from "utils/helpers";
 
 const { cloudHosting, mailEnabled } = getAppsmithConfigs();

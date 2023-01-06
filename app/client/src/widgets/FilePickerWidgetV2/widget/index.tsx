@@ -11,7 +11,7 @@ import { ValidationTypes } from "constants/WidgetValidation";
 import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import { DerivedPropertiesMap } from "utils/WidgetFactory";
 import Dashboard from "@uppy/dashboard";
-import shallowequal from "shallowequal";
+import { shallowEqual } from "shallowequal";
 import _, { findIndex } from "lodash";
 import FileDataTypes from "../constants";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
@@ -765,7 +765,7 @@ class FilePickerWidget extends BaseWidget<
     if (previousSelectedFiles.length && selectedFiles.length === 0) {
       this.state.uppy.reset();
     } else if (
-      !shallowequal(prevProps.allowedFileTypes, this.props.allowedFileTypes) ||
+      !shallowEqual(prevProps.allowedFileTypes, this.props.allowedFileTypes) ||
       prevProps.maxNumFiles !== this.props.maxNumFiles ||
       prevProps.maxFileSize !== this.props.maxFileSize
     ) {

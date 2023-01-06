@@ -101,6 +101,7 @@ export function DatabaseColumns(props: DatabaseFieldProps) {
   );
 
   return (
+    // @ts-expect-error type
     <Popover
       boundary={"viewport"}
       hoverCloseDelay={0}

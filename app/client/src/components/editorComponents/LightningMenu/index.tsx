@@ -11,6 +11,7 @@ import { useTheme } from "styled-components";
 import CustomizedDropdown, {
   CustomizedDropdownProps,
 } from "pages/common/CustomizedDropdown";
+import { AnyAction, Dispatch } from "redux";
 
 const lightningMenuOptions = (
   skin: Skin,
@@ -18,7 +19,7 @@ const lightningMenuOptions = (
   queries: Action[],
   widgets: WidgetProps[],
   pageId: string,
-  dispatch: (action: unknown) => void,
+  dispatch: Dispatch<AnyAction>,
   updateDynamicInputValue: (value: string, cursor?: number) => void,
   trigger: React.ReactNode,
   onCloseLightningMenu?: () => void,

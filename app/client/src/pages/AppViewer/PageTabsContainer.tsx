@@ -84,7 +84,7 @@ export function PageTabsContainer(props: AppViewerHeaderProps) {
     }
   }, [tabsRef.current]);
 
-  const measuredTabsRef = useCallback((node) => {
+  const measuredTabsRef = useCallback((node: HTMLElement | null) => {
     tabsRef.current = node;
     if (node !== null) {
       const { offsetWidth, scrollWidth } = node;

@@ -125,7 +125,7 @@ function logLatestEvalPropertyErrors(
           // TODO Rank and set the most critical error
           // const error = evalErrors[0];
           // Reformatting eval errors here to a format usable by the debugger
-          const errorMessages = errors.map((e) => {
+          const errorMessages = errors.map((e: any) => {
             // Error format required for the debugger
             return {
               message: e.errorMessage,
@@ -224,14 +224,14 @@ export function* evalErrorHandler(
               diffs,
             },
             // Level is warning because it could be a user error
-            level: Sentry.Severity.Warning,
+            level: "warning",
           });
           // Log an analytics event for cyclical dep errors
           AnalyticsUtil.logEvent("CYCLICAL_DEPENDENCY_ERROR", {
             node,
             entityType,
             // Level is warning because it could be a user error
-            level: Sentry.Severity.Warning,
+            level: "warning",
           });
         }
 

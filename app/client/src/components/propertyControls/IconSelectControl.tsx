@@ -176,43 +176,46 @@ class IconSelectControl extends BaseControl<
     return (
       <>
         <IconSelectContainerStyles id={this.id} targetWidth={containerWidth} />
-        <TypedSelect
-          activeItem={activeIcon || defaultIconName || NONE}
-          className="icon-select-container"
-          inputProps={{
-            inputRef: this.searchInput,
-          }}
-          itemListRenderer={this.renderMenu}
-          itemPredicate={this.filterIconName}
-          itemRenderer={this.renderIconItem}
-          items={ICON_NAMES}
-          onItemSelect={this.handleItemSelect}
-          onQueryChange={this.handleQueryChange}
-          popoverProps={{
-            enforceFocus: false,
-            minimal: true,
-            isOpen: this.state.isOpen,
-            popoverClassName: `icon-select-popover-${this.id}`,
-            onInteraction: (state) => {
-              if (this.state.isOpen !== state)
-                this.debouncedSetState({ isOpen: state });
-            },
-          }}
-        >
-          <StyledButton
-            alignText={Alignment.LEFT}
-            className={
-              Classes.TEXT_OVERFLOW_ELLIPSIS + " " + replayHighlightClass
-            }
-            elementRef={this.iconSelectTargetRef}
-            fill
-            icon={iconName || defaultIconName}
-            onClick={this.handleButtonClick}
-            rightIcon="caret-down"
-            tabIndex={0}
-            text={iconName || defaultIconName || NONE}
-          />
-        </TypedSelect>
+        {
+          // @ts-expect-error type
+          <TypedSelect
+            activeItem={activeIcon || defaultIconName || NONE}
+            className="icon-select-container"
+            inputProps={{
+              inputRef: this.searchInput,
+            }}
+            itemListRenderer={this.renderMenu}
+            itemPredicate={this.filterIconName}
+            itemRenderer={this.renderIconItem}
+            items={ICON_NAMES}
+            onItemSelect={this.handleItemSelect}
+            onQueryChange={this.handleQueryChange}
+            popoverProps={{
+              enforceFocus: false,
+              minimal: true,
+              isOpen: this.state.isOpen,
+              popoverClassName: `icon-select-popover-${this.id}`,
+              onInteraction: (state) => {
+                if (this.state.isOpen !== state)
+                  this.debouncedSetState({ isOpen: state });
+              },
+            }}
+          >
+            <StyledButton
+              alignText={Alignment.LEFT}
+              className={
+                Classes.TEXT_OVERFLOW_ELLIPSIS + " " + replayHighlightClass
+              }
+              elementRef={this.iconSelectTargetRef}
+              fill
+              icon={iconName || defaultIconName}
+              onClick={this.handleButtonClick}
+              rightIcon="caret-down"
+              tabIndex={0}
+              text={iconName || defaultIconName || NONE}
+            />
+          </TypedSelect>
+        }
       </>
     );
   }

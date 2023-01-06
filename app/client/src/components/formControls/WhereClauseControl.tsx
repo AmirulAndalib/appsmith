@@ -239,7 +239,7 @@ function ConditionComponent(props: any, index: number) {
 
 // This is the block which contains an operator and multiple conditions/ condition blocks
 function ConditionBlock(props: any) {
-  const formValues: any = useSelector((state) =>
+  const formValues: any = useSelector((state: object) =>
     getFormValues(props.formName)(state),
   );
 

@@ -144,7 +144,7 @@ function MultiSelectComponent({
 
   // Trigger onFilterChange once filter is Updated
   useEffect(() => {
-    const timeOutId = setTimeout(
+    const timeOutId = window.setTimeout(
       () => onFilterChange(filter),
       DEBOUNCE_TIMEOUT,
     );

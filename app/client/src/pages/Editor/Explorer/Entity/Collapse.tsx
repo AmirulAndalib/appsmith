@@ -14,6 +14,7 @@ export function EntityCollapse(props: {
 }) {
   if (!props.children) return null;
   return (
+    // @ts-expect-error type
     <Collapse isOpen={props.isOpen}>
       <CollapsedContainer
         active={props.active}

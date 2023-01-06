@@ -60,6 +60,7 @@ const PickMyLocation: React.FC<PickMyLocationProps> = (props) => {
           getUserLocation();
         }
       }}
+      // @ts-expect-error type
       title={title}
     />
   );

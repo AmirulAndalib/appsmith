@@ -82,7 +82,7 @@ export function EntityProperties() {
     state.entities.jsActions.find((js) => js.config.id === entityId),
   );
 
-  const closeContainer = useCallback((e) => {
+  const closeContainer = useCallback((e: any) => {
     e.stopPropagation();
     dispatch({
       type: ReduxActionTypes.SET_ENTITY_INFO,

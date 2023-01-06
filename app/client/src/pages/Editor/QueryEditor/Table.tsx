@@ -281,7 +281,7 @@ function Table(props: TableProps) {
   const scrollBarSize = getScrollBarWidth(tableBodyEle, scrollBarW);
 
   const RenderRow = React.useCallback(
-    ({ index, style }) => {
+    ({ index, style }: any) => {
       const row = rows[index];
 
       prepareRow(row);

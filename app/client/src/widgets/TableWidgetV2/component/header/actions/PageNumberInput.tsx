@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { NumericInput, Keys } from "@blueprintjs/core";
+import { Keys, NumericInput } from "@blueprintjs/core";
 import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import { lightenColor } from "widgets/WidgetUtils";
 
@@ -40,6 +40,7 @@ const PageNumberInputWrapper = styled(NumericInput)<{
     box-shadow: 0 0 0 2px ${({ accentColor }) => lightenColor(accentColor)} !important;
     border-color: ${({ accentColor }) => accentColor} !important;
   }
+
   margin: 0 8px;
 `;
 
@@ -60,7 +61,7 @@ export function PageNumberInput(props: {
   }, [props.pageNo]);
 
   const handleUpdatePageNo = useCallback(
-    (e) => {
+    (e: { target: { value: any } }) => {
       const oldPageNo = props.pageNo || 0;
       let page = Number(e.target.value);
 

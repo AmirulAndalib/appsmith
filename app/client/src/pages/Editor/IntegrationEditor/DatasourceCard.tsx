@@ -357,7 +357,7 @@ function DatasourceCard(props: DatasourceCardProps) {
             {(canDeleteDatasource || canEditDatasource) && (
               <MenuWrapper
                 className="t--datasource-menu-option"
-                onClick={(e) => {
+                onClick={(e: any) => {
                   e.stopPropagation();
                 }}
               >
@@ -413,7 +413,7 @@ function DatasourceCard(props: DatasourceCardProps) {
       </DatasourceCardMainBody>
       {!isNil(currentFormConfig) && (
         <CollapseComponentWrapper
-          onClick={(e) => {
+          onClick={(e: any) => {
             e.stopPropagation();
           }}
         >

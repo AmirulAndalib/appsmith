@@ -176,7 +176,7 @@ function TableFilterPaneContent(props: TableFilterProps) {
   );
   return (
     <TableFilterOuterWrapper
-      onClick={(e) => {
+      onClick={(e: any) => {
         e.stopPropagation();
       }}
     >

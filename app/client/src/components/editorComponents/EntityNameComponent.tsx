@@ -140,7 +140,7 @@ class EntityNameComponent extends React.Component<
             onBlur={this.onBlur}
             onChange={onChange}
             onFocus={this.onFocus}
-            onKeyPress={(e) => {
+            onKeyPress={(e: any) => {
               if (e.key === "Enter") {
                 this.onPressEnter(e);
               }

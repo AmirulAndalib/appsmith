@@ -108,7 +108,7 @@ export function ImageCell(props: renderImageType) {
             <div
               className="image-cell-wrapper"
               key={index}
-              onClick={(e) => {
+              onClick={(e: any) => {
                 e.stopPropagation();
                 onClick();
               }}

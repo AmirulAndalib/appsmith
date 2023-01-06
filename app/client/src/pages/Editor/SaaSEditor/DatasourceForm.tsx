@@ -268,7 +268,7 @@ class DatasourceSaaSEditor extends JSONtoForm<Props, State> {
     const viewMode =
       !hiddenHeader && new URLSearchParams(params).get("viewMode");
 
-    /* 
+    /*
       TODO: This flag will be removed once the multiple environment is merged to avoid design inconsistency between different datasources.
       Search for: GoogleSheetPluginFlag to check for all the google sheet conditional logic throughout the code.
     */
@@ -283,7 +283,7 @@ class DatasourceSaaSEditor extends JSONtoForm<Props, State> {
     return (
       <>
         <form
-          onSubmit={(e) => {
+          onSubmit={(e: any) => {
             e.preventDefault();
           }}
         >

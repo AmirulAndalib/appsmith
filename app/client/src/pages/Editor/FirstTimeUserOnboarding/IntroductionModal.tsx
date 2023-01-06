@@ -140,6 +140,7 @@ export default function IntroductionModal({ close }: IntroductionModalProps) {
     });
   }, []);
   return (
+    // @ts-expect-error type
     <Overlay hasBackdrop isOpen transitionDuration={25} usePortal>
       <Wrapper className="t--onboarding-introduction-modal">
         <CenteredContainer>

@@ -12,6 +12,12 @@ module.exports = {
     },
   },
   webpack: {
+    alias: {
+      "react-redux":
+        process.env.NODE_ENV === "development"
+          ? "react-redux/lib"
+          : "react-redux",
+    },
     configure: {
       resolve: {
         fallback: {

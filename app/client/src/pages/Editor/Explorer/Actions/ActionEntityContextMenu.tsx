@@ -92,7 +92,7 @@ export function ActionEntityContextMenu(props: EntityContextMenuProps) {
   }, [dispatch, props.id, guidedTourEnabled]);
 
   const showBinding = useCallback(
-    (actionId, actionName) =>
+    (actionId: any, actionName: any) =>
       dispatch({
         type: ReduxActionTypes.SET_ENTITY_INFO,
         payload: {

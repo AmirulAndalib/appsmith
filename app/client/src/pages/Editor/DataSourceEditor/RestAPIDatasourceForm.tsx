@@ -336,7 +336,7 @@ class DatasourceRestAPIEditor extends React.Component<
         {!hiddenHeader && <CloseEditor />}
         <FormContainerBody>
           <form
-            onSubmit={(e) => {
+            onSubmit={(e: any) => {
               e.preventDefault();
             }}
           >
@@ -694,7 +694,7 @@ class DatasourceRestAPIEditor extends React.Component<
     const { authentication } = this.props.formData;
     if (!authentication) return;
     let content;
-    switch (_.get(authentication, "grantType")) {
+    switch ((_.get(authentication, "grantType") as unknown) as GrantType) {
       case GrantType.AuthorizationCode:
         content = this.renderOauth2AuthorizationCode();
         break;

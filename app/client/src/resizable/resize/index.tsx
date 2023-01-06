@@ -341,12 +341,12 @@ export const Resizable = forwardRef(function Resizable(
         transform: `translate3d(${newDimensions.x}px,${newDimensions.y}px,0)`,
       }}
     >
-      {(_props) => (
+      {(_styles: any) => (
         <ResizeWrapper
           $prevents={pointerEvents}
           className={props.className}
           ref={ref}
-          style={_props}
+          style={_styles}
         >
           {props.children}
           {props.enableHorizontalResize && renderHandles}

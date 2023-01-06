@@ -232,7 +232,8 @@ class ImageComponent extends React.Component<
             disabled: !zoomActive,
           }}
         >
-          {({ zoomIn, zoomOut }: any) => (
+          {// @ts-expect-error React.ReactNode issue
+          ({ zoomIn, zoomOut }: any) => (
             <>
               {this.renderImageControl()}
               <TransformComponent>

@@ -368,7 +368,7 @@ export function Installer(props: { left: number }) {
     setURL(value);
   }, []);
 
-  const validate = useCallback((text) => {
+  const validate = useCallback((text: string) => {
     const isValid = !text || isValidJSFileURL(text);
     setIsValid(isValid);
     return {

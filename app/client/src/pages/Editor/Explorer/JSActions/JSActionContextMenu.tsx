@@ -40,7 +40,7 @@ export function JSCollectionEntityContextMenu(props: EntityContextMenuProps) {
   const dispatch = useDispatch();
 
   const showBinding = useCallback(
-    (actionId, actionName) =>
+    (actionId: any, actionName: any) =>
       dispatch({
         type: ReduxActionTypes.SET_ENTITY_INFO,
         payload: {

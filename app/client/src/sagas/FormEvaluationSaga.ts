@@ -272,6 +272,7 @@ function* fetchDynamicValueSaga(
 }
 
 function* formEvaluationChangeListenerSaga() {
+  // @ts-expect-error type
   const formEvalChannel: ActionPattern<ReduxActionType<
     FormEvalActionPayload
   >> = yield actionChannel(FORM_EVALUATION_REDUX_ACTIONS);

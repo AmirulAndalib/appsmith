@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, ReactNode } from "react";
 import styled from "styled-components";
 import AppCrashImage from "assets/images/404-image.png";
 import * as Sentry from "@sentry/react";
@@ -35,7 +35,7 @@ const RetryButton = styled.button`
   font-size: 17px;
 `;
 
-class AppErrorBoundary extends Component {
+class AppErrorBoundary extends Component<{ children?: ReactNode }> {
   state = {
     hasError: false,
   };

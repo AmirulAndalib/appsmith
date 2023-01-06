@@ -18,6 +18,7 @@ import {
   hasDeleteActionPermission,
   hasManageActionPermission,
 } from "@appsmith/utils/permissionHelpers";
+import { AppState } from "../../../../ce/reducers";
 
 const getUpdateActionNameReduxAction = (id: string, name: string) => {
   return saveActionName({ id, name });
@@ -33,7 +34,9 @@ type ExplorerActionEntityProps = {
 
 export const ExplorerActionEntity = memo((props: ExplorerActionEntityProps) => {
   const pageId = useSelector(getCurrentPageId);
-  const action = useSelector((state) => getAction(state, props.id)) as Action;
+  const action = useSelector((state: AppState) =>
+    getAction(state, props.id),
+  ) as Action;
   const plugins = useSelector(getPlugins);
   const pluginGroups = useMemo(() => keyBy(plugins, "id"), [plugins]);
   const location = useLocation();

@@ -149,18 +149,21 @@ function FilterCategory({
             />
           );
         })}
-        <Collapse isOpen>
-          {filterList.slice(FILTERS_TO_SHOW).map((filter) => {
-            return (
-              <FilterItem
-                item={filter}
-                key={filter.label}
-                onSelect={onSelect}
-                selected={isSelected(filter)}
-              />
-            );
-          })}
-        </Collapse>
+        {
+          // @ts-expect-error type
+          <Collapse isOpen>
+            {filterList.slice(FILTERS_TO_SHOW).map((filter) => {
+              return (
+                <FilterItem
+                  item={filter}
+                  key={filter.label}
+                  onSelect={onSelect}
+                  selected={isSelected(filter)}
+                />
+              );
+            })}
+          </Collapse>
+        }
         {/* We will be adding this back later */}
         {/* {!!filterList.slice(FILTERS_TO_SHOW).length && (
           <Text

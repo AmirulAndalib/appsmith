@@ -33,20 +33,24 @@ type Props = {
 function DocsSearchModal({ children, modalOpen, toggleShow }: Props) {
   return (
     <StyledDocsSearchModal>
-      <Overlay
-        hasBackdrop
-        isOpen={modalOpen}
-        onClose={toggleShow}
-        onClosing={() => {
-          AnalyticsUtil.logEvent("CLOSE_OMNIBAR");
-        }}
-        transitionDuration={25}
-        usePortal={false}
-      >
-        <div className={`${Classes.OVERLAY_CONTENT} t--global-search-modal`}>
-          {children}
-        </div>
-      </Overlay>
+      {
+        // @ts-expect-error type
+
+        <Overlay
+          hasBackdrop
+          isOpen={modalOpen}
+          onClose={toggleShow}
+          onClosing={() => {
+            AnalyticsUtil.logEvent("CLOSE_OMNIBAR");
+          }}
+          transitionDuration={25}
+          usePortal={false}
+        >
+          <div className={`${Classes.OVERLAY_CONTENT} t--global-search-modal`}>
+            {children}
+          </div>
+        </Overlay>
+      }
     </StyledDocsSearchModal>
   );
 }

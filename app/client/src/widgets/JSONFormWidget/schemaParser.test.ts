@@ -854,6 +854,7 @@ describe("#getSchemaItemByFieldType", () => {
       "schema.__root_schema__.children.address.children.city";
     const schemaItem = get({ schema }, schemaItemPath);
     schemaItem.isCustomField = true;
+    // @ts-expect-error field doesn't exist on schemaItem
     schemaItem.name = "newCityName";
     schemaItem.accessor = "newCityName";
 

@@ -1,0 +1,10 @@
+diff --git a/node_modules/react-dnd/lib/common/DndProvider.d.ts b/node_modules/react-dnd/lib/common/DndProvider.d.ts
+index a5737a0..4ed6ac0 100644
+--- a/node_modules/react-dnd/lib/common/DndProvider.d.ts
++++ b/node_modules/react-dnd/lib/common/DndProvider.d.ts
+@@ -11,4 +11,4 @@ export declare type DndProviderProps<BackendContext, BackendOptions> = {
+ /**
+  * A React component that provides the React-DnD context
+  */
+-export declare const DndProvider: React.FC<DndProviderProps<any, any>>;
++export declare const DndProvider: React.FC<React.PropsWithChildren<DndProviderProps<any, any>>>;

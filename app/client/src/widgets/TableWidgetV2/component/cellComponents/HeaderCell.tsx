@@ -1,6 +1,5 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Tooltip } from "@blueprintjs/core";
-
 import { Colors } from "constants/Colors";
 import styled from "styled-components";
 import { ControlIcons } from "icons/ControlIcons";
@@ -15,6 +14,7 @@ const AscendingIcon = styled(ControlIcons.SORT_CONTROL)`
   top: 3px;
   cursor: pointer;
   transform: rotate(180deg);
+
   && svg {
     path {
       fill: ${Colors.LIGHT_GREYISH_BLUE};
@@ -27,6 +27,7 @@ const DescendingIcon = styled(ControlIcons.SORT_CONTROL)`
   position: relative;
   top: 3px;
   cursor: pointer;
+
   && svg {
     path {
       fill: ${Colors.LIGHT_GREYISH_BLUE};

@@ -2083,11 +2083,10 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       clear();
     } else {
       /*
-       * We need to let the evaulations compute derived property (filteredTableData)
+       * We need to let the evaluations compute derived property (filteredTableData)
        * before we clear the editableCell to avoid the text flickering
        */
-      // @ts-expect-error: setTimeout return type mismatch
-      this.inlineEditTimer = setTimeout(clear, 100);
+      this.inlineEditTimer = window.setTimeout(clear, 100);
     }
   };
 

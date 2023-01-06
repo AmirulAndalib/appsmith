@@ -21,6 +21,7 @@ describe("DynamicInputTextControl", () => {
   });
   it("renders correctly", () => {
     render(
+      // @ts-expect-error type
       <ReduxFormDecorator>
         <DynamicInputTextControl
           actionName="Test action"

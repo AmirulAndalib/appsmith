@@ -106,7 +106,7 @@ export const renderCell = (
                   <div
                     className="image-cell-wrapper"
                     key={index}
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       if (isSelected) {
                         e.stopPropagation();
                       }
@@ -442,7 +442,7 @@ function TableAction(props: {
   return (
     <ActionWrapper
       disabled={props.isDisabled}
-      onClick={(e) => {
+      onClick={(e: any) => {
         if (props.isSelected) {
           e.stopPropagation();
         }
@@ -802,30 +802,32 @@ export const renderDropdown = (props: {
   };
   return (
     <div onClick={stopClickEventPropagation} style={{ height: "100%" }}>
-      <StyledSingleDropDown
-        filterable={false}
-        itemRenderer={renderSingleSelectItem}
-        items={props.options}
-        onItemSelect={(item: DropdownOption) => {
-          props.onItemSelect(props.onOptionChange, item);
-        }}
-        popoverProps={{
-          minimal: true,
-          usePortal: true,
-          popoverClassName: "select-popover-wrapper",
-        }}
-      >
-        <BButton
-          rightIcon={IconNames.CHEVRON_DOWN}
-          text={
-            !isEmpty(props.options) &&
-            props.selectedIndex !== undefined &&
-            props.selectedIndex > -1
-              ? props.options[props.selectedIndex].label
-              : "-- Select --"
-          }
-        />
-      </StyledSingleDropDown>
+      {
+        <StyledSingleDropDown
+          filterable={false}
+          itemRenderer={renderSingleSelectItem}
+          items={props.options}
+          onItemSelect={(item: DropdownOption) => {
+            props.onItemSelect(props.onOptionChange, item);
+          }}
+          popoverProps={{
+            minimal: true,
+            usePortal: true,
+            popoverClassName: "select-popover-wrapper",
+          }}
+        >
+          <BButton
+            rightIcon={IconNames.CHEVRON_DOWN}
+            text={
+              !isEmpty(props.options) &&
+              props.selectedIndex !== undefined &&
+              props.selectedIndex > -1
+                ? props.options[props.selectedIndex].label
+                : "-- Select --"
+            }
+          />
+        </StyledSingleDropDown>
+      }
     </div>
   );
 };

@@ -233,6 +233,7 @@ export default connect((state: AppState) => {
     formSyncErrors: getFormSyncErrors(WELCOME_FORM_NAME)(state),
   };
 }, null)(
+  // @ts-expect-error type
   reduxForm<DetailsFormValues, { formSyncErrors?: FormErrors<string, string> }>(
     {
       validate,

@@ -194,7 +194,7 @@ function RapidApiEditorForm(props: Props) {
           />
           <DynamicTextField
             disabled
-            leftIcon={FormIcons.SLASH_ICON}
+            leftIcon={<FormIcons.SLASH_ICON />}
             name="actionConfiguration.path"
             placeholder="v1/method"
           />

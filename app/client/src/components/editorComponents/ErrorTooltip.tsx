@@ -66,18 +66,21 @@ function ErrorTooltip(props: Props) {
   return (
     <Wrapper>
       <TooltipStyles />
-      <Popover
-        autoFocus
-        canEscapeKeyClose
-        content={props.message}
-        isOpen={props.isOpen && !!props.message}
-        portalClassName={`error-tooltip ${props.customClass || ""}`}
-        position={props.boundary ? "auto" : "bottom"}
-        usePortal
-        {...conditionalProps}
-      >
-        {props.children}
-      </Popover>
+      {
+        // @ts-expect-error type
+        <Popover
+          autoFocus
+          canEscapeKeyClose
+          content={props.message}
+          isOpen={props.isOpen && !!props.message}
+          portalClassName={`error-tooltip ${props.customClass || ""}`}
+          position={props.boundary ? "auto" : "bottom"}
+          usePortal
+          {...conditionalProps}
+        >
+          {props.children}
+        </Popover>
+      }
     </Wrapper>
   );
 }

@@ -20,7 +20,7 @@ function PropertyPaneContainer() {
   /**
    * on property pane sidebar width change
    */
-  const onRightSidebarWidthChange = useCallback((newWidth) => {
+  const onRightSidebarWidthChange = useCallback((newWidth: number) => {
     dispatch(setPropertyPaneWidthAction(newWidth));
   }, []);
 

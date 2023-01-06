@@ -32,13 +32,13 @@ import copy from "copy-to-clipboard";
 
 import { EvaluationError } from "utils/DynamicBindingUtils";
 import * as Sentry from "@sentry/react";
-import { Severity } from "@sentry/react";
 import { CodeEditorExpected } from "components/editorComponents/CodeEditor/index";
 import { Indices, Layers } from "constants/Layers";
 import { useDispatch, useSelector } from "react-redux";
 import { getEvaluatedPopupState } from "selectors/editorContextSelectors";
 import { AppState } from "@appsmith/reducers";
 import { setEvalPopupState } from "actions/editorContextActions";
+import { SeverityLevel } from "@sentry/react";
 
 const modifiers: IPopoverSharedProps["modifiers"] = {
   offset: {
@@ -250,7 +250,7 @@ export function PreparedStatementViewer(props: {
   const { parameters, value } = props.evaluatedValue;
   if (!value) {
     Sentry.captureException("Prepared Statement got no value", {
-      level: Severity.Debug,
+      level: "debug" as SeverityLevel,
       extra: { props },
     });
     return <div />;
@@ -395,25 +395,28 @@ const ControlledCurrentValueViewer = memo(
             <CollapseToggle isOpen={openEvaluatedValue} />
           </StyledTitle>
         )}
-        <Collapse isOpen={openEvaluatedValue}>
-          <CurrentValueWrapper
-            className="t-property-evaluated-value"
-            colorTheme={props.theme}
-          >
-            {content}
-            {props.hasOwnProperty("evaluatedValue") && (
-              <CopyIconWrapper
-                colorTheme={props.theme}
-                minimal
-                onClick={() =>
-                  copyContent(props.evaluatedValue, onCopyContentText)
-                }
-              >
-                <CopyIcon height={34} />
-              </CopyIconWrapper>
-            )}
-          </CurrentValueWrapper>
-        </Collapse>
+        {
+          // @ts-expect-error type
+          <Collapse isOpen={openEvaluatedValue}>
+            <CurrentValueWrapper
+              className="t-property-evaluated-value"
+              colorTheme={props.theme}
+            >
+              {content}
+              {props.hasOwnProperty("evaluatedValue") && (
+                <CopyIconWrapper
+                  colorTheme={props.theme}
+                  minimal
+                  onClick={() =>
+                    copyContent(props.evaluatedValue, onCopyContentText)
+                  }
+                >
+                  <CopyIcon height={34} />
+                </CopyIconWrapper>
+              )}
+            </CurrentValueWrapper>
+          </Collapse>
+        }
       </>
     );
   },
@@ -499,11 +502,14 @@ function PopoverContent(props: PopoverContentProps) {
             Expected Structure
             <CollapseToggle isOpen={openExpectedDataType} />
           </StyledTitle>
-          <Collapse isOpen={openExpectedDataType}>
-            <TypeText colorTheme={props.theme} padded ref={typeTextRef}>
-              {props.expected.type}
-            </TypeText>
-          </Collapse>
+          {
+            // @ts-expect-error type
+            <Collapse isOpen={openExpectedDataType}>
+              <TypeText colorTheme={props.theme} padded ref={typeTextRef}>
+                {props.expected.type}
+              </TypeText>
+            </Collapse>
+          }
         </>
       )}
       {props.expected && props.expected.type !== UNDEFINED_VALIDATION && (
@@ -512,15 +518,18 @@ function PopoverContent(props: PopoverContentProps) {
             Expected Structure - Example
             <CollapseToggle isOpen={openExpectedExample} />
           </StyledTitle>
-          <Collapse isOpen={openExpectedExample}>
-            <TypeText colorTheme={props.theme} ref={typeTextRef}>
-              <CurrentValueViewer
-                evaluatedValue={props.expected.example}
-                hideLabel
-                theme={props.theme}
-              />
-            </TypeText>
-          </Collapse>
+          {
+            // @ts-expect-error type
+            <Collapse isOpen={openExpectedExample}>
+              <TypeText colorTheme={props.theme} ref={typeTextRef}>
+                <CurrentValueViewer
+                  evaluatedValue={props.expected.example}
+                  hideLabel
+                  theme={props.theme}
+                />
+              </TypeText>
+            </Collapse>
+          }
         </>
       )}
       {!props.hideEvaluatedValue && (
@@ -576,8 +585,7 @@ function EvaluatedValuePopup(props: Props) {
             setContentHovered(true);
           }}
           onMouseLeave={() => {
-            const id = setTimeout(() => setContentHovered(false), 500);
-            // @ts-expect-error: setTimeout return type mismatch
+            const id = window.setTimeout(() => setContentHovered(false), 500);
             setTimeoutId(id);
           }}
           preparedStatementViewer={

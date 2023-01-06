@@ -50,9 +50,12 @@ export function SettingSection(props: SettingSectionProps) {
           />
         )}
       </div>
-      <Collapse isOpen={isOpen} transitionDuration={0}>
-        <div className="pt-2 pb-1 space-y-3">{props.children}</div>
-      </Collapse>
+      {
+        // @ts-expect-error type
+        <Collapse isOpen={isOpen} transitionDuration={0}>
+          <div className="pt-2 pb-1 space-y-3">{props.children}</div>
+        </Collapse>
+      }
     </SettingsWrapper>
   );
 }

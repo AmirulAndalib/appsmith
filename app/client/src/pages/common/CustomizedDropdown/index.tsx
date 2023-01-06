@@ -147,32 +147,36 @@ export function CustomizedDropdown(props: CustomizedDropdownProps) {
   ));
   return (
     <>
-      <Popover
-        enforceFocus={false}
-        interactionKind={
-          props.openOnHover
-            ? PopoverInteractionKind.HOVER
-            : PopoverInteractionKind.CLICK
-        }
-        minimal
-        modifiers={props.modifiers}
-        onClose={() => {
-          if (props.onCloseDropDown) {
-            props.onCloseDropDown();
+      {
+        // @ts-expect-error type
+
+        <Popover
+          enforceFocus={false}
+          interactionKind={
+            props.openOnHover
+              ? PopoverInteractionKind.HOVER
+              : PopoverInteractionKind.CLICK
           }
-        }}
-        popoverClassName={props.customizedDropdownId}
-        position={
-          getDirectionBased.POPPER_POSITION(
-            props.openDirection,
-          ) as PopoverPosition
-        }
-      >
-        <DropdownTrigger skin={skin}>{trigger}</DropdownTrigger>
-        <DropdownContent borderRadius={props.borderRadius} skin={skin}>
-          {content}
-        </DropdownContent>
-      </Popover>
+          minimal
+          modifiers={props.modifiers}
+          onClose={() => {
+            if (props.onCloseDropDown) {
+              props.onCloseDropDown();
+            }
+          }}
+          popoverClassName={props.customizedDropdownId}
+          position={
+            getDirectionBased.POPPER_POSITION(
+              props.openDirection,
+            ) as PopoverPosition
+          }
+        >
+          <DropdownTrigger skin={skin}>{trigger}</DropdownTrigger>
+          <DropdownContent borderRadius={props.borderRadius} skin={skin}>
+            {content}
+          </DropdownContent>
+        </Popover>
+      }
       <PopoverStyles
         borderRadius={props.borderRadius}
         id={props.customizedDropdownId}

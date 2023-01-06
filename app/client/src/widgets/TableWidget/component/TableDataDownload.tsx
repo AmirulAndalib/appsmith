@@ -192,6 +192,7 @@ function TableDataDownload(props: TableDataDownloadProps) {
     );
   }
   return (
+    // @ts-expect-error type
     <Popover
       enforceFocus={false}
       interactionKind={PopoverInteractionKind.CLICK}

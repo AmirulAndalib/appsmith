@@ -61,7 +61,7 @@ function NewActionButton(props: NewActionButtonProps) {
   const currentPageId = useSelector(getCurrentPageId);
 
   const createQueryAction = useCallback(
-    (e) => {
+    (e: any) => {
       e?.stopPropagation();
       if (
         pluginType === PluginType.API &&

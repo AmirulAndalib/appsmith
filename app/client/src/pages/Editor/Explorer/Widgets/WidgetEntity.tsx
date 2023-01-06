@@ -102,7 +102,7 @@ export const WidgetEntity = memo((props: WidgetEntityProps) => {
   }, [widgetType, widgetId, parentModalId]);
 
   const switchWidget = useCallback(
-    (e) => {
+    (e: any) => {
       AnalyticsUtil.logEvent("ENTITY_EXPLORER_CLICK", {
         type: "WIDGETS",
         fromUrl: location.pathname,

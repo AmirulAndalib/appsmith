@@ -77,7 +77,7 @@ function AddPageContextMenu({
   const featureFlags = useSelector(selectFeatureFlags);
 
   const menuRef = useCallback(
-    (node) => {
+    (node: { focus: () => void }) => {
       if (node && show) {
         node.focus();
       }
@@ -152,30 +152,33 @@ function AddPageContextMenu({
           handleSubmitKey={handleSelect}
           handleUpKey={handleUpKey}
         >
-          <Wrapper ref={menuRef} tabIndex={0}>
-            <Text autofocus className="title" type={TextType.H5}>
-              {createMessage(CANVAS_NEW_PAGE_CARD)}
-            </Text>
-            {ContextMenuItems.map((item, idx) => {
-              const MenuIcon = item.icon;
+          {
+            // @ts-expect-error type
+            <Wrapper ref={menuRef} tabIndex={0}>
+              <Text autofocus className="title" type={TextType.H5}>
+                {createMessage(CANVAS_NEW_PAGE_CARD)}
+              </Text>
+              {ContextMenuItems.map((item, idx) => {
+                const MenuIcon = item.icon;
 
-              return (
-                <MenuItem
-                  active={idx === activeItemIdx}
-                  data-cy={item["data-cy"]}
-                  key={item.title}
-                  onClick={() => onMenuItemClick(item)}
-                >
-                  <IconWrapper color={Colors.GRAY_700} size={IconSize.XXL}>
-                    <MenuIcon />
-                  </IconWrapper>
-                  <Text color={Colors.MIRAGE} type={TextType.P1}>
-                    {item.title}
-                  </Text>
-                </MenuItem>
-              );
-            })}
-          </Wrapper>
+                return (
+                  <MenuItem
+                    active={idx === activeItemIdx}
+                    data-cy={item["data-cy"]}
+                    key={item.title}
+                    onClick={() => onMenuItemClick(item)}
+                  >
+                    <IconWrapper color={Colors.GRAY_700} size={IconSize.XXL}>
+                      <MenuIcon />
+                    </IconWrapper>
+                    <Text color={Colors.MIRAGE} type={TextType.P1}>
+                      {item.title}
+                    </Text>
+                  </MenuItem>
+                );
+              })}
+            </Wrapper>
+          }
         </HotKeys>
       }
       isOpen={show}

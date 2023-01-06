@@ -198,6 +198,7 @@ class ApiEditor extends React.Component<Props> {
     }
 
     return (
+      // @ts-expect-error  This JSX tag's 'children' prop expects a single child of type 'ReactNode', but multiple children were provided.
       <div style={formStyles}>
         {formUiComponent === "ApiEditorForm" && (
           <RestApiEditorForm

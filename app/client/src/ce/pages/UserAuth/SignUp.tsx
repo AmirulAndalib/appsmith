@@ -228,7 +228,7 @@ export default connect((state: AppState, props: SignUpFormProps) => {
   const queryParams = new URLSearchParams(props.location.search);
   return {
     initialValues: {
-      email: queryParams.get("email"),
+      email: queryParams.get("email") || "",
     },
     emailValue: selector(state, SIGNUP_FORM_EMAIL_FIELD_NAME),
   };

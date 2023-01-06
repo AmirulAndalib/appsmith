@@ -18,6 +18,12 @@ import {
   stringToJS,
 } from "components/editorComponents/ActionCreator/utils";
 import { AdditionalDynamicDataTree } from "utils/autocomplete/customTreeTypeDefCreator";
+import {
+  bindingMarker,
+  entityMarker,
+} from "../editorComponents/CodeEditor/markHelpers";
+import { bindingHint } from "../editorComponents/CodeEditor/hintHelpers";
+import { commandsHelper } from "../editorComponents/CodeEditor/commandsHelper";
 
 const PromptMessage = styled.span`
   line-height: 17px;
@@ -63,10 +69,12 @@ export function InputText(props: InputTextProp) {
         dataTreePath={dataTreePath}
         evaluatedValue={evaluatedValue}
         expected={expected}
+        hinting={[bindingHint, commandsHelper]}
         input={{
           value: value,
           onChange: onChange,
         }}
+        marking={[bindingMarker, entityMarker]}
         mode={EditorModes.TEXT_WITH_BINDING}
         placeholder={placeholder}
         promptMessage={<PromptMessage>{promptMessage}</PromptMessage>}

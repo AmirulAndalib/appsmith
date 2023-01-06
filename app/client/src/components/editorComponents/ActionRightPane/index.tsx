@@ -181,9 +181,12 @@ export function Collapsible({
         <Icon keepColors name="down-arrow" size={IconSize.XXXL} />
         <span className="label">{label}</span>
       </Label>
-      <Collapse isOpen={isOpen} keepChildrenMounted>
-        {children}
-      </Collapse>
+      {
+        // @ts-expect-error typescript doesn't know about isOpen
+        <Collapse isOpen={isOpen} keepChildrenMounted>
+          {children}
+        </Collapse>
+      }
     </CollapsibleWrapper>
   );
 }

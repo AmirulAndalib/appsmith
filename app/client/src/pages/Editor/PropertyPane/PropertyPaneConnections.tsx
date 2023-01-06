@@ -218,7 +218,7 @@ const useDependencyList = (name: string) => {
   );
   const guidedTour = useSelector(inGuidedTour);
 
-  const getEntityId = useCallback((name) => {
+  const getEntityId = useCallback((name: string | number) => {
     const entity = dataTree[name];
 
     if (isWidget(entity)) {

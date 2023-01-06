@@ -520,12 +520,12 @@ export function ReflowResizable(props: ResizableProps) {
         transform: `translate3d(${newDimensions.x}px,${newDimensions.y}px,0)`,
       }}
     >
-      {(_props) => (
+      {(_styles: any) => (
         <ResizeWrapper
           $prevents={pointerEvents}
           className={props.className}
           ref={resizableRef}
-          style={_props}
+          style={_styles}
         >
           {props.children}
           {props.enableHorizontalResize && renderHandles}

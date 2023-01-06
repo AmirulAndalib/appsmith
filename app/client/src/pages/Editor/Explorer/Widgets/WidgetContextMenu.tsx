@@ -63,7 +63,7 @@ export function WidgetContextMenu(props: {
   }, [dispatch, widgetId, parentId, widget, parentWidget]);
 
   const showBinding = useCallback(
-    (widgetId, widgetName) =>
+    (widgetId: any, widgetName: any) =>
       dispatch({
         type: ReduxActionTypes.SET_ENTITY_INFO,
         payload: {

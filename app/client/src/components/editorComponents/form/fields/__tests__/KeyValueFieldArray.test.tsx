@@ -36,7 +36,7 @@ function getComponent(props: any) {
 describe("Bug 11832: KeyValueFieldArray", () => {
   it("If no headers data is there, it must maintain 2 pairs of empty fields by default", () => {
     render(getComponent(initialProps));
-    rendererTimer = setTimeout(() => {
+    rendererTimer = window.setTimeout(() => {
       const headerDivs = document.querySelectorAll('div[class*="t--Headers"]');
       expect(headerDivs.length).toBe(2);
     }, 0);
@@ -48,7 +48,7 @@ describe("Bug 11832: KeyValueFieldArray", () => {
     initialProps.actionConfig.push({ key: "p1", value: "p2" });
     initialProps.actionConfig.push({ key: "p1", value: "p2" });
     render(getComponent(initialProps));
-    rendererTimer = setTimeout(() => {
+    rendererTimer = window.setTimeout(() => {
       const headerDivs = document.querySelectorAll('div[class*="t--Headers"]');
       expect(headerDivs.length).toBe(4);
     }, 0);

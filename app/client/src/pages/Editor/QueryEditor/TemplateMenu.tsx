@@ -70,7 +70,7 @@ class TemplateMenu extends React.Component<Props> {
       <Container
         className="t--template-menu"
         onClick={() => createTemplate("")}
-        onKeyPress={(e) => {
+        onKeyPress={(e: any) => {
           e.preventDefault();
 
           if (e.key === "Enter") {
@@ -92,7 +92,7 @@ class TemplateMenu extends React.Component<Props> {
             return (
               <Row
                 key={templateKey}
-                onClick={(e) => {
+                onClick={(e: any) => {
                   const template = this.fetchTemplate(templateKey);
                   createTemplate(template);
                   e.stopPropagation();

@@ -72,6 +72,7 @@ const StyledButton = styled((props: IButtonProps & Partial<ButtonProps>) => (
 `;
 const StyledAnchorButton = styled(
   (props: IButtonProps & Partial<ButtonProps>) => (
+    // @ts-expect-error type
     <BlueprintAnchorButton
       {...omit(props, ["iconAlignment", "fluid", "filled", "outline"])}
     />

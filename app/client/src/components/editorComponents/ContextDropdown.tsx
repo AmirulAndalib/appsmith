@@ -94,6 +94,7 @@ export function ContextDropdown(props: ContextDropdownProps) {
   ) => <DropdownItem key={option.value} {...option} />;
 
   return (
+    // @ts-expect-error type
     <Dropdown
       className={props.className}
       filterable={false}

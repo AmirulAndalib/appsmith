@@ -1,0 +1,21 @@
+diff --git a/node_modules/@blueprintjs/popover2/lib/esm/popover2.d.ts b/node_modules/@blueprintjs/popover2/lib/esm/popover2.d.ts
+index eb8f49b..293ef2e 100644
+--- a/node_modules/@blueprintjs/popover2/lib/esm/popover2.d.ts
++++ b/node_modules/@blueprintjs/popover2/lib/esm/popover2.d.ts
+@@ -2,6 +2,7 @@ import { State as PopperState, PositioningStrategy } from "@popperjs/core";
+ import * as React from "react";
+ import { AbstractPureComponent2, IRef } from "@blueprintjs/core";
+ import { Popover2SharedProps } from "./popover2SharedProps";
++import { PropsWithChildren } from "react";
+ export declare const Popover2InteractionKind: {
+     CLICK: "click";
+     CLICK_TARGET_ONLY: "click-target";
+@@ -9,7 +10,7 @@ export declare const Popover2InteractionKind: {
+     HOVER_TARGET_ONLY: "hover-target";
+ };
+ export declare type Popover2InteractionKind = typeof Popover2InteractionKind[keyof typeof Popover2InteractionKind];
+-export declare type Popover2Props<TProps = React.HTMLProps<HTMLElement>> = IPopover2Props<TProps>;
++export declare type Popover2Props<TProps = React.HTMLProps<HTMLElement>> = PropsWithChildren<IPopover2Props<TProps>>;
+ /** @deprecated use Popover2Props */
+ export interface IPopover2Props<TProps = React.HTMLProps<HTMLElement>> extends Popover2SharedProps<TProps> {
+     /**

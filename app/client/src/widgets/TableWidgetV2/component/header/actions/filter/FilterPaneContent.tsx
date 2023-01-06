@@ -175,7 +175,7 @@ function TableFilterPaneContent(props: TableFilterProps) {
   return (
     <TableFilterOuterWrapper
       borderRadius={props.borderRadius}
-      onClick={(e) => {
+      onClick={(e: any) => {
         e.stopPropagation();
       }}
     >

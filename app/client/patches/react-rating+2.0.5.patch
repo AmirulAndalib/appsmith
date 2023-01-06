@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-rating/index.d.ts b/node_modules/react-rating/index.d.ts
+index 919d559..7264a51 100644
+--- a/node_modules/react-rating/index.d.ts
++++ b/node_modules/react-rating/index.d.ts
+@@ -6,7 +6,7 @@
+ import { Dictionary } from "lodash";
+ import * as React from "react";
+ 
+-declare class Rating extends React.Component<RatingComponentProps> {}
++declare class Rating extends React.Component<React.PropsWithChildren<RatingComponentProps>> {}
+ declare namespace Rating {
+ 
+ }

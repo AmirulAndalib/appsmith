@@ -20,7 +20,7 @@ import ResizableComponent from "components/editorComponents/ResizableComponent";
 import { ExecuteTriggerPayload } from "constants/AppsmithActionConstants/ActionConstants";
 import PositionedContainer from "components/designSystems/appsmith/PositionedContainer";
 import WidgetNameComponent from "components/editorComponents/WidgetNameComponent";
-import shallowequal from "shallowequal";
+import { shallowEqual } from "shallowequal";
 import { EditorContext } from "components/editorComponents/EditorContextProvider";
 import ErrorBoundary from "components/editorComponents/ErrorBoundry";
 import { DerivedPropertiesMap } from "utils/WidgetFactory";
@@ -519,8 +519,8 @@ abstract class BaseWidget<
   // as they're extending this one.
   shouldComponentUpdate(nextProps: WidgetProps, nextState: WidgetState) {
     return (
-      !shallowequal(nextProps, this.props) ||
-      !shallowequal(nextState, this.state)
+      !shallowEqual(nextProps, this.props) ||
+      !shallowEqual(nextState, this.state)
     );
   }
 

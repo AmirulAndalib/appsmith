@@ -538,10 +538,8 @@ function* runActionSaga(
     `action not found for id - ${actionId}`,
   );
 
-  const datasourceUrl = get(
-    actionObject,
-    "datasource.datasourceConfiguration.url",
-  );
+  const datasourceUrl =
+    get(actionObject, "datasource.datasourceConfiguration.url") || {};
 
   AppsmithConsole.info({
     text: "Execution started from user request",

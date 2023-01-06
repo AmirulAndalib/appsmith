@@ -129,7 +129,7 @@ const AutoHeightOverlay: React.FC<AutoHeightOverlayProps> = memo(
       <StyledAutoHeightOverlay
         isHidden={isHidden}
         layerIndex={autoHeightWithLimitsOverlay}
-        onClick={(e) => {
+        onClick={(e: any) => {
           // avoid DropTarget handleFocus
           e.stopPropagation();
         }}

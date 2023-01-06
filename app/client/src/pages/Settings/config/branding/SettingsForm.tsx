@@ -63,7 +63,7 @@ function SettingsForm(props: SettingsFormProps) {
               <ImageInput
                 className="t--settings-brand-logo-input"
                 defaultValue={defaultValues.APPSMITH_BRAND_LOGO}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   onChange && onChange(e);
 
                   AnalyticsUtil.logEvent("BRANDING_PROPERTY_UPDATE", {
@@ -92,7 +92,7 @@ function SettingsForm(props: SettingsFormProps) {
               <ImageInput
                 className="t--settings-brand-favicon-input"
                 defaultValue={defaultValues.APPSMITH_BRAND_FAVICON}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   onChange && onChange(e);
 
                   AnalyticsUtil.logEvent("BRANDING_PROPERTY_UPDATE", {

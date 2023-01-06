@@ -10,7 +10,7 @@ import { LabelPosition } from "components/constants";
 import styled from "styled-components";
 import SwitchComponent from "widgets/SwitchWidget/component";
 import { AlignWidgetTypes } from "widgets/constants";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 
 const UnsavedChangesMarker = styled.div<{ accentColor: string }>`
   position: absolute;

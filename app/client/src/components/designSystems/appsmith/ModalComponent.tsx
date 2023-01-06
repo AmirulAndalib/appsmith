@@ -97,6 +97,7 @@ export function ModalComponent(props: ModalComponentProps) {
     }
   }, [props.scrollContents]);
   return (
+    // @ts-expect-error type
     <Overlay
       canEscapeKeyClose={false}
       canOutsideClickClose={false}
@@ -116,29 +117,32 @@ export function ModalComponent(props: ModalComponentProps) {
         width={props.width}
         zIndex={props.zIndex !== undefined ? props.zIndex : Layers.modalWidget}
       >
-        <Overlay
-          canEscapeKeyClose={props.canEscapeKeyClose}
-          canOutsideClickClose={props.canOutsideClickClose}
-          className={props.overlayClassName}
-          enforceFocus={false}
-          hasBackdrop={
-            props.hasBackDrop !== undefined ? !!props.hasBackDrop : true
-          }
-          isOpen={props.isOpen}
-          onClose={props.onClose}
-          usePortal={false}
-        >
-          <div>
-            <Content
-              className={`${getCanvasClassName()} ${props.className}`}
-              height={props.height}
-              ref={modalContentRef}
-              scroll={props.scrollContents}
-            >
-              {props.children}
-            </Content>
-          </div>
-        </Overlay>
+        {
+          // @ts-expect-error type
+          <Overlay
+            canEscapeKeyClose={props.canEscapeKeyClose}
+            canOutsideClickClose={props.canOutsideClickClose}
+            className={props.overlayClassName}
+            enforceFocus={false}
+            hasBackdrop={
+              props.hasBackDrop !== undefined ? !!props.hasBackDrop : true
+            }
+            isOpen={props.isOpen}
+            onClose={props.onClose}
+            usePortal={false}
+          >
+            <div>
+              <Content
+                className={`${getCanvasClassName()} ${props.className}`}
+                height={props.height}
+                ref={modalContentRef}
+                scroll={props.scrollContents}
+              >
+                {props.children}
+              </Content>
+            </div>
+          </Overlay>
+        }
       </Container>
     </Overlay>
   );

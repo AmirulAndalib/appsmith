@@ -449,7 +449,7 @@ function renderImportedDatasButton(
   return (
     <KeyValueStackContainer>
       <ShowHideImportedHeaders
-        onClick={(e) => {
+        onClick={(e: any) => {
           e.preventDefault();
           onClick(!showInheritedAttributes);
         }}

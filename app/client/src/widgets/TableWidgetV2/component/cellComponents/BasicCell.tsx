@@ -1,5 +1,5 @@
 import React, { Ref, useCallback } from "react";
-import { Tooltip } from "@blueprintjs/core";
+import { Tooltip } from "components/temporary";
 import styled from "styled-components";
 import { ReactComponent as EditIcon } from "assets/icons/control/edit-variant1.svg";
 import { BaseCellComponentProps, TABLE_SIZES } from "../Constants";

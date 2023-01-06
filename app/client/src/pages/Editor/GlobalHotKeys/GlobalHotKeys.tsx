@@ -154,7 +154,7 @@ class GlobalHotKeys extends React.Component<Props> {
           combo="mod + j"
           global
           label="Lookup code snippets"
-          onKeyDown={(e) => {
+          onKeyDown={(e: any) => {
             this.onOnmnibarHotKeyDown(e, SEARCH_CATEGORY_ID.SNIPPETS);
             AnalyticsUtil.logEvent("SNIPPET_LOOKUP", {
               source: "HOTKEY_COMBO",

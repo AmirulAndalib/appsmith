@@ -39,7 +39,9 @@ export interface StyledRadioGroupProps {
   children?: React.ReactNode;
 }
 
-const StyledRadioGroup = styled(RadioGroup)<StyledRadioGroupProps>`
+const StyledRadioGroup = styled(RadioGroup)<
+  React.PropsWithChildren<StyledRadioGroupProps>
+>`
   ${BlueprintRadioSwitchGroupTransform}
 
   .${Classes.CONTROL} {

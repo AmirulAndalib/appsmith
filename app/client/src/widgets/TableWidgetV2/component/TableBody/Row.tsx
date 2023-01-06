@@ -52,7 +52,7 @@ export function Row(props: RowType) {
         ""} ${isAddRowInProgress && props.index === 0 ? "new-row" : ""}`}
       data-rowindex={props.index}
       key={key}
-      onClick={(e) => {
+      onClick={(e: any) => {
         props.row.toggleRowSelected();
         selectTableRow?.(props.row);
         e.stopPropagation();

@@ -83,40 +83,44 @@ function HelperTooltip(props: Props) {
         </div>
         <div className="infoIconDiv">
           <TooltipStyles />
-          <Popover
-            autoFocus
-            canEscapeKeyClose
-            content={
-              <div>
-                <span>How to get credentials: </span>
-                <p
-                  dangerouslySetInnerHTML={{
-                    __html: props.providerCredentialSteps
-                      .split("\\n\\n")
-                      .join("<br />")
-                      .split("\\n")
-                      .join("<br /><br />"),
+          {
+            // @ts-expect-error type
+
+            <Popover
+              autoFocus
+              canEscapeKeyClose
+              content={
+                <div>
+                  <span>How to get credentials: </span>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: props.providerCredentialSteps
+                        .split("\\n\\n")
+                        .join("<br />")
+                        .split("\\n")
+                        .join("<br /><br />"),
+                    }}
+                    style={{ color: "#d0d7dd", fontWeight: 100 }}
+                  />
+                </div>
+              }
+              defaultIsOpen={false}
+              interactionKind={PopoverInteractionKind.HOVER}
+              portalClassName="credentials-tooltip"
+              position="bottom"
+              usePortal
+            >
+              <IconContainer style={{ display: "inline-block" }}>
+                <FormIcons.INFO_ICON
+                  height={22}
+                  style={{
+                    cursor: "pointer",
                   }}
-                  style={{ color: "#d0d7dd", fontWeight: 100 }}
+                  width={22}
                 />
-              </div>
-            }
-            defaultIsOpen={false}
-            interactionKind={PopoverInteractionKind.HOVER}
-            portalClassName="credentials-tooltip"
-            position="bottom"
-            usePortal
-          >
-            <IconContainer style={{ display: "inline-block" }}>
-              <FormIcons.INFO_ICON
-                height={22}
-                style={{
-                  cursor: "pointer",
-                }}
-                width={22}
-              />
-            </IconContainer>
-          </Popover>
+              </IconContainer>
+            </Popover>
+          }
         </div>
       </div>
     </CredentialTooltipWrapper>

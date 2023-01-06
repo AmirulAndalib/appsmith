@@ -15,7 +15,9 @@ function listenToVisibilityEvents() {
 }
 
 function* handleTabVisibilityConnection() {
-  const channel: EventChannel<unknown> = yield call(listenToVisibilityEvents);
+  const channel: EventChannel<object | null> = yield call(
+    listenToVisibilityEvents,
+  );
   while (true) {
     const event: { target: { visibilityState: VisibilityState } } = yield take(
       channel,

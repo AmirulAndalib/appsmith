@@ -37,6 +37,7 @@ describe("DynamicTextFieldControl", () => {
       responseType: "TABLE",
     };
     render(
+      // @ts-expect-error type
       <ReduxFormDecorator>
         <FormControl config={config} formName={"TestForm"} />
       </ReduxFormDecorator>,
