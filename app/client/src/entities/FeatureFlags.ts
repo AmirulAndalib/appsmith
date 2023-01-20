@@ -9,6 +9,7 @@ type FeatureFlags = {
   USAGE_AND_BILLING?: boolean;
   DATASOURCE_ENVIRONMENTS?: boolean;
   MULTIPLE_PANES?: boolean;
+  LAZY_CANVAS_RENDERING?: boolean;
 };
 
 export default FeatureFlags;
