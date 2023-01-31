@@ -125,6 +125,7 @@ export type ModalComponentProps = {
   widgetId: string;
   widgetName: string;
   isDynamicHeightEnabled: boolean;
+  isAutofocusEnabledOnAnyModalChild?: boolean;
 };
 
 /* eslint-disable react/display-name */
@@ -162,8 +163,9 @@ export default function ModalComponent(props: ModalComponentProps) {
     setTimeout(() => {
       setModalPosition("unset");
     }, 100);
-
-    modalContentRef.current?.focus();
+    // Focus on Modal if none of its content/childen have autofocus enabled
+    !props.isAutofocusEnabledOnAnyModalChild &&
+      modalContentRef.current?.focus();
 
     return () => {
       // handle modal close events when this component unmounts

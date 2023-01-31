@@ -17,6 +17,7 @@ import { ValidationTypes } from "constants/WidgetValidation";
 import { isAutoHeightEnabledForWidget } from "widgets/WidgetUtils";
 import { Stylesheet } from "entities/AppTheming";
 import { SelectionRequestType } from "sagas/WidgetSelectUtils";
+import { getDataTree } from "selectors/dataTreeSelectors";
 
 const minSize = 100;
 
@@ -238,6 +239,9 @@ export class ModalWidget extends BaseWidget<ModalWidgetProps, WidgetState> {
         className={`t--modal-widget ${generateClassName(this.props.widgetId)}`}
         enableResize={isResizeEnabled}
         height={this.props.height}
+        isAutofocusEnabledOnAnyModalChild={
+          this.props.isAutofocusEnabledOnAnyModalChild
+        }
         isDynamicHeightEnabled={isAutoHeightEnabledForWidget(this.props)}
         isEditMode={isEditMode}
         isOpen={!!this.props.isVisible}
@@ -311,9 +315,23 @@ const mapDispatchToProps = (dispatch: any) => ({
     });
   },
 });
-
-const mapStateToProps = (state: AppState) => {
+const isAutoFocusEnabled = (state: AppState, modalChildren: any) => {
+  if (!modalChildren) return false;
+  return modalChildren.some(({ widgetId }: { widgetId: string }) => {
+    const matchingWidget = Object.values(getDataTree(state)).find(
+      (widgetDataState: any) => widgetDataState?.widgetId === widgetId,
+    );
+    return !!matchingWidget?.autoFocus;
+  });
+};
+const mapStateToProps = (state: AppState, { children }: { children: any }) => {
+  //check if any modal content or children have been set with autoFocus
+  const isAutofocusEnabledOnAnyModalChild = isAutoFocusEnabled(
+    state,
+    children?.[0]?.children,
+  );
   const props = {
+    isAutofocusEnabledOnAnyModalChild,
     mainCanvasWidth: getCanvasWidth(state),
     isSnipingMode: snipingModeSelector(state),
     selectedWidget: state.ui.widgetDragResize.lastSelectedWidget,
