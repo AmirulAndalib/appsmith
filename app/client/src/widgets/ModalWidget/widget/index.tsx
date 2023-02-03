@@ -315,23 +315,29 @@ const mapDispatchToProps = (dispatch: any) => ({
     });
   },
 });
-const isAutoFocusEnabled = (state: AppState, modalChildren: any) => {
-  if (!modalChildren) return false;
-  return modalChildren.some(({ widgetId }: { widgetId: string }) => {
-    const matchingWidget = Object.values(getDataTree(state)).find(
-      (widgetDataState: any) => widgetDataState?.widgetId === widgetId,
-    );
-    return !!matchingWidget?.autoFocus;
+const isAutoFocusEnabled = (
+  state: AppState,
+  modalChildrenWidget: WidgetProps[] | undefined,
+) => {
+  if (!modalChildrenWidget) return false;
+  return modalChildrenWidget.some((widget: WidgetProps) => {
+    const widgetState = getDataTree(state)[widget.widgetName] as any;
+    return !!widgetState?.autoFocus;
   });
 };
-const mapStateToProps = (state: AppState, { children }: { children: any }) => {
+
+const mapStateToProps = (
+  state: AppState,
+  { children }: { children: WidgetProps },
+) => {
+  const modalsChildrenWidgets = children?.[0]?.children;
   //check if any modal content or children have been set with autoFocus
   const isAutofocusEnabledOnAnyModalChild = isAutoFocusEnabled(
     state,
-    children?.[0]?.children,
+    modalsChildrenWidgets,
   );
   const props = {
-    isAutofocusEnabledOnAnyModalChild,
+    isAutofocusEnabledOnAnyModalChild: isAutofocusEnabledOnAnyModalChild,
     mainCanvasWidth: getCanvasWidth(state),
     isSnipingMode: snipingModeSelector(state),
     selectedWidget: state.ui.widgetDragResize.lastSelectedWidget,
