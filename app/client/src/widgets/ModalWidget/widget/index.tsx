@@ -18,6 +18,7 @@ import { isAutoHeightEnabledForWidget } from "widgets/WidgetUtils";
 import { Stylesheet } from "entities/AppTheming";
 import { SelectionRequestType } from "sagas/WidgetSelectUtils";
 import { getDataTree } from "selectors/dataTreeSelectors";
+import { DataTree } from "entities/DataTree/dataTreeFactory";
 
 const minSize = 100;
 
@@ -321,7 +322,7 @@ const isAutoFocusEnabled = (
 ) => {
   if (!modalChildrenWidget) return false;
   return modalChildrenWidget.some((widget: WidgetProps) => {
-    const widgetState = getDataTree(state)[widget.widgetName] as any;
+    const widgetState = getDataTree(state)[widget.widgetName] as DataTree;
     return !!widgetState?.autoFocus;
   });
 };
