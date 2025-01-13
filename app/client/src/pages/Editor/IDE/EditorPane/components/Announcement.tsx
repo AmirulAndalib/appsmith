@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { AnnouncementModal, Button } from "design-system";
+import { AnnouncementModal, Button } from "@appsmith/ads";
 import localStorage, { LOCAL_STORAGE_KEYS } from "utils/localStorage";
-import {
-  SPLITPANE_ANNOUNCEMENT,
-  createMessage,
-} from "@appsmith/constants/messages";
-import { getAssetUrl } from "@appsmith/utils/airgapHelpers";
+import { SPLITPANE_ANNOUNCEMENT, createMessage } from "ee/constants/messages";
+import { getAssetUrl } from "ee/utils/airgapHelpers";
 import { ASSETS_CDN_URL } from "constants/ThirdPartyConstants";
+import { useFeatureFlag } from "utils/hooks/useFeatureFlag";
+import { FEATURE_FLAG } from "ee/entities/FeatureFlag";
 
 const Announcement = () => {
   const localStorageFlag =
@@ -25,6 +24,10 @@ const Announcement = () => {
     );
   };
 
+  const featureIsOutOfBeta = useFeatureFlag(
+    FEATURE_FLAG.release_actions_redesign_enabled,
+  );
+
   const modalFooter = () => (
     <>
       <Button
@@ -40,6 +43,11 @@ const Announcement = () => {
       </Button>
     </>
   );
+
+  // If the feature is out of beta, don't show the announcement
+  if (featureIsOutOfBeta) {
+    return null;
+  }
 
   return (
     <AnnouncementModal

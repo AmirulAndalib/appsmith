@@ -1,26 +1,22 @@
 import React, { useContext } from "react";
 import ActionNameEditor from "components/editorComponents/ActionNameEditor";
-import { Button } from "design-system";
+import { Button } from "@appsmith/ads";
 import { StyledFormRow } from "./EditorJSONtoForm";
 import styled from "styled-components";
 import { useFeatureFlag } from "utils/hooks/useFeatureFlag";
-import { FEATURE_FLAG } from "@appsmith/entities/FeatureFlag";
-import {
-  getHasExecuteActionPermission,
-  getHasManageActionPermission,
-} from "@appsmith/utils/BusinessFeatures/permissionPageHelpers";
-import { useActiveAction } from "@appsmith/pages/Editor/Explorer/hooks";
+import { FEATURE_FLAG } from "ee/entities/FeatureFlag";
+import { getHasManageActionPermission } from "ee/utils/BusinessFeatures/permissionPageHelpers";
+import { useActiveActionBaseId } from "ee/pages/Editor/Explorer/hooks";
 import { useSelector } from "react-redux";
-import {
-  getAction,
-  getPluginNameFromId,
-} from "@appsmith/selectors/entitiesSelector";
+import { getActionByBaseId, getPlugin } from "ee/selectors/entitiesSelector";
 import { QueryEditorContext } from "./QueryEditorContext";
 import type { Plugin } from "api/PluginApi";
 import type { Datasource } from "entities/Datasource";
-import type { AppState } from "@appsmith/reducers";
-import { SQL_DATASOURCES } from "constants/QueryEditorConstants";
+import type { AppState } from "ee/reducers";
 import DatasourceSelector from "./DatasourceSelector";
+import { getSavingStatusForActionName } from "selectors/actionSelectors";
+import { getAssetUrl } from "ee/utils/airgapHelpers";
+import { ActionUrlIcon } from "../Explorer/ExplorerIcons";
 
 const NameWrapper = styled.div`
   display: flex;
@@ -47,6 +43,7 @@ interface Props {
   formName: string;
   dataSources: Datasource[];
   onCreateDatasourceClick: () => void;
+  isRunDisabled?: boolean;
   isRunning: boolean;
   onRunClick: () => void;
 }
@@ -55,6 +52,7 @@ const QueryEditorHeader = (props: Props) => {
   const {
     dataSources,
     formName,
+    isRunDisabled = false,
     isRunning,
     onCreateDatasourceClick,
     onRunClick,
@@ -62,9 +60,11 @@ const QueryEditorHeader = (props: Props) => {
   } = props;
   const { moreActionsMenu, saveActionName } = useContext(QueryEditorContext);
 
-  const activeActionId = useActiveAction();
+  const activeActionBaseId = useActiveActionBaseId();
   const currentActionConfig = useSelector((state) =>
-    activeActionId ? getAction(state, activeActionId) : undefined,
+    activeActionBaseId
+      ? getActionByBaseId(state, activeActionBaseId)
+      : undefined,
   );
   const isFeatureEnabled = useFeatureFlag(FEATURE_FLAG.license_gac_enabled);
   const isChangePermitted = getHasManageActionPermission(
@@ -72,54 +72,48 @@ const QueryEditorHeader = (props: Props) => {
     currentActionConfig?.userPermissions,
   );
 
-  const isExecutePermitted = getHasExecuteActionPermission(
-    isFeatureEnabled,
-    currentActionConfig?.userPermissions,
+  const isDatasourceSelectorEnabled = useFeatureFlag(
+    FEATURE_FLAG.release_ide_datasource_selector_enabled,
   );
 
-  // get the current action's plugin name
-  const currentActionPluginName = useSelector((state: AppState) =>
-    getPluginNameFromId(state, currentActionConfig?.pluginId || ""),
+  const currentPlugin = useSelector((state: AppState) =>
+    getPlugin(state, currentActionConfig?.pluginId || ""),
   );
 
-  let actionBody = "";
-  if (!!currentActionConfig?.actionConfiguration) {
-    if ("formData" in currentActionConfig?.actionConfiguration) {
-      // if the action has a formData (the action is postUQI e.g. Oracle)
-      actionBody =
-        currentActionConfig.actionConfiguration.formData?.body?.data || "";
-    } else {
-      // if the action is pre UQI, the path is different e.g. mySQL
-      actionBody = currentActionConfig.actionConfiguration?.body || "";
-    }
-  }
+  const saveStatus = useSelector((state) =>
+    getSavingStatusForActionName(state, currentActionConfig?.id || ""),
+  );
 
-  // if (the body is empty and the action is an sql datasource) or the user does not have permission, block action execution.
-  const blockExecution =
-    (!actionBody && SQL_DATASOURCES.includes(currentActionPluginName)) ||
-    !isExecutePermitted;
+  const iconUrl = getAssetUrl(currentPlugin?.iconLocation) || "";
+
+  const icon = ActionUrlIcon(iconUrl);
 
   return (
     <StyledFormRow>
       <NameWrapper>
         <ActionNameEditor
+          actionConfig={currentActionConfig}
           disabled={!isChangePermitted}
+          icon={icon}
           saveActionName={saveActionName}
+          saveStatus={saveStatus}
         />
       </NameWrapper>
       <ActionsWrapper>
         {moreActionsMenu}
-        <DatasourceSelector
-          currentActionConfig={currentActionConfig}
-          dataSources={dataSources}
-          formName={formName}
-          onCreateDatasourceClick={onCreateDatasourceClick}
-          plugin={plugin}
-        />
+        {isDatasourceSelectorEnabled && (
+          <DatasourceSelector
+            currentActionConfig={currentActionConfig}
+            dataSources={dataSources}
+            formName={formName}
+            onCreateDatasourceClick={onCreateDatasourceClick}
+            plugin={plugin}
+          />
+        )}
         <Button
           className="t--run-query"
           data-guided-tour-iid="run-query"
-          isDisabled={blockExecution}
+          isDisabled={isRunDisabled}
           isLoading={isRunning}
           onClick={onRunClick}
           size="md"

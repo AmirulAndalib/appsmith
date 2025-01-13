@@ -9,18 +9,20 @@ import {
 } from "components/formControls/utils";
 import log from "loglevel";
 import { ComparisonOperationsEnum } from "components/formControls/BaseControl";
-import type { AppState } from "@appsmith/reducers";
+import type { AppState } from "ee/reducers";
 import { connect } from "react-redux";
-import { getPlugin } from "@appsmith/selectors/entitiesSelector";
-import { DB_NOT_SUPPORTED } from "@appsmith/utils/Environments";
+import { getPlugin } from "ee/selectors/entitiesSelector";
+import { DB_NOT_SUPPORTED } from "ee/utils/Environments";
 import type { PluginType } from "entities/Action";
-import { getDefaultEnvId } from "@appsmith/api/ApiUtils";
-import { EnvConfigSection } from "@appsmith/components/EnvConfigSection";
-import { getCurrentEnvironmentId } from "@appsmith/selectors/environmentSelectors";
-import { isMultipleEnvEnabled } from "@appsmith/utils/planHelpers";
-import { selectFeatureFlags } from "@appsmith/selectors/featureFlagsSelectors";
-import { Text } from "design-system";
-import { Table } from "design-system-old";
+import { getDefaultEnvId } from "ee/api/ApiUtils";
+import { EnvConfigSection } from "ee/components/EnvConfigSection";
+import { getCurrentEnvironmentId } from "ee/selectors/environmentSelectors";
+import { isMultipleEnvEnabled } from "ee/utils/planHelpers";
+import { selectFeatureFlags } from "ee/selectors/featureFlagsSelectors";
+import { Text } from "@appsmith/ads";
+import { Table } from "@appsmith/ads-old";
+import type { FeatureFlags } from "ee/entities/FeatureFlag";
+import { RagDocuments } from "ee/components/formControls/RagDocuments";
 
 const Key = styled.div`
   color: var(--ads-v2-color-fg-muted);
@@ -52,7 +54,6 @@ const FieldWrapper = styled.div`
 export const ViewModeWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid var(--ads-v2-color-border);
   padding: var(--ads-v2-spaces-7) 0;
   gap: var(--ads-v2-spaces-4);
   overflow: auto;
@@ -62,14 +63,19 @@ export const ViewModeWrapper = styled.div`
 `;
 
 interface RenderDatasourceSectionProps {
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any;
   datasource: Datasource;
   viewMode?: boolean;
   showOnlyCurrentEnv?: boolean;
   currentEnv: string;
   isEnvEnabled: boolean;
+  featureFlags?: FeatureFlags;
 }
 const renderKVArray = (
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: Array<any>,
   currentEnvironment: string,
   datasource: Datasource,
@@ -84,6 +90,8 @@ const renderKVArray = (
     const renderValues: Array<
       Array<{
         key: string;
+        // TODO: Fix this the next time the file is edited
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         value: any;
         label: string;
       }>
@@ -93,6 +101,9 @@ const renderKVArray = (
         { configProperty, label }: { configProperty: string; label: string },
       ) => {
         const configPropertyKey = configProperty.split("[*].")[1];
+
+        // TODO: Fix this the next time the file is edited
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         values.forEach((value: any, index: number) => {
           if (!acc[index]) {
             acc[index] = [];
@@ -104,10 +115,12 @@ const renderKVArray = (
             value: value[configPropertyKey],
           });
         });
+
         return acc;
       },
       [],
     );
+
     return renderValues.map((renderValue, index: number) => (
       <FieldWrapper key={`${firstConfigProperty}.${index}`}>
         {renderValue.map(({ key, label, value }) => (
@@ -124,10 +137,13 @@ const renderKVArray = (
 };
 
 export function renderDatasourceSection(
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   section: any,
   currentEnvironment: string,
   datasource: Datasource,
   viewMode: boolean | undefined,
+  featureFlags?: FeatureFlags,
 ) {
   return (
     <React.Fragment key={datasource.id}>
@@ -136,11 +152,12 @@ export function renderDatasourceSection(
           isHidden(
             datasource.datasourceStorages[currentEnvironment],
             section.hidden,
-            undefined,
+            featureFlags,
             viewMode,
           )
         )
           return null;
+
         if ("children" in section) {
           if (isKVArray(section.children)) {
             return renderKVArray(
@@ -155,6 +172,7 @@ export function renderDatasourceSection(
             currentEnvironment,
             datasource,
             viewMode,
+            featureFlags,
           );
         } else {
           try {
@@ -167,6 +185,19 @@ export function renderDatasourceSection(
             const customConfigProperty =
               `datasourceStorages.${currentEnvironment}.` + configProperty;
             const reactKey = datasource.id + "_" + label;
+
+            if (controlType === "RAG_DOCUMENTS") {
+              return (
+                <RagDocuments
+                  datasourceId={datasource.id}
+                  isDeletedAvailable={false}
+                  isImportDataAvailable={false}
+                  key={reactKey}
+                  workspaceId={datasource.workspaceId}
+                />
+              );
+            }
+
             if (controlType === "FIXED_KEY_INPUT") {
               return (
                 <FieldWrapper key={reactKey}>
@@ -181,8 +212,11 @@ export function renderDatasourceSection(
             if (controlType === "DROP_DOWN") {
               if (Array.isArray(section.options)) {
                 const option = section.options.find(
+                  // TODO: Fix this the next time the file is edited
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   (el: any) => el.value === value,
                 );
+
                 if (option && option.label) {
                   value = option.label;
                 }
@@ -223,6 +257,8 @@ export function renderDatasourceSection(
                           {
                             Header: "Size",
                             accessor: "size",
+                            // TODO: Fix this the next time the file is edited
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             Cell: (props: any) => formatFileSize(props.value),
                           },
                         ]}
@@ -260,6 +296,8 @@ export function renderDatasourceSection(
                   <Key>{label}: </Key>
                   {value.map(
                     (
+                      // TODO: Fix this the next time the file is edited
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       { key, value }: { key: string; value: any },
                       index: number,
                     ) => (
@@ -299,6 +337,7 @@ class RenderDatasourceInformation extends React.Component<RenderDatasourceSectio
       config,
       currentEnv,
       datasource,
+      featureFlags,
       isEnvEnabled,
       showOnlyCurrentEnv,
       viewMode,
@@ -311,7 +350,14 @@ class RenderDatasourceInformation extends React.Component<RenderDatasourceSectio
       if (!datasourceStorages) {
         return null;
       }
-      return renderDatasourceSection(config, currentEnv, datasource, viewMode);
+
+      return renderDatasourceSection(
+        config,
+        currentEnv,
+        datasource,
+        viewMode,
+        featureFlags,
+      );
     }
 
     return (
@@ -324,6 +370,8 @@ class RenderDatasourceInformation extends React.Component<RenderDatasourceSectio
     );
   }
 }
+// TODO: Fix this the next time the file is edited
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapStateToProps = (state: AppState, ownProps: any) => {
   const { datasource } = ownProps;
   const pluginId = datasource.pluginId;
@@ -333,9 +381,12 @@ const mapStateToProps = (state: AppState, ownProps: any) => {
     ? false
     : isMultipleEnvEnabled(selectFeatureFlags(state));
   const currentEnvironmentId = getCurrentEnvironmentId(state);
+  const featureFlags = selectFeatureFlags(state);
+
   return {
     currentEnv: isEnvEnabled ? currentEnvironmentId : getDefaultEnvId(),
     isEnvEnabled,
+    featureFlags,
   };
 };
 

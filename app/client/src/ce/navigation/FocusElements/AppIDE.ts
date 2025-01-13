@@ -1,9 +1,4 @@
 import {
-  setApiPaneConfigSelectedTabIndex,
-  setApiPaneDebuggerState,
-  setApiRightPaneSelectedTab,
-} from "actions/apiPaneActions";
-import {
   setAllEntityCollapsibleStates,
   setAllSubEntityCollapsibleStates,
   setCodeEditorHistory,
@@ -12,11 +7,6 @@ import {
   setPanelPropertiesState,
   setWidgetSelectedPropertyTabIndex,
 } from "actions/editorContextActions";
-import {
-  getApiPaneConfigSelectedTabIndex,
-  getApiPaneDebuggerState,
-  getApiRightPaneSelectedTab,
-} from "selectors/apiPaneSelectors";
 import {
   getAllEntityCollapsibleStates,
   getAllPropertySectionState,
@@ -45,10 +35,6 @@ import {
   setPropertyPaneWidthAction,
   setSelectedPropertyPanels,
 } from "actions/propertyPaneActions";
-import {
-  setQueryPaneConfigSelectedTabIndex,
-  setQueryPaneDebuggerState,
-} from "actions/queryPaneActions";
 import { selectWidgetInitAction } from "actions/widgetSelectionActions";
 import {
   DEFAULT_ENTITY_EXPLORER_WIDTH,
@@ -68,11 +54,7 @@ import {
   getPropertyPaneWidth,
   getSelectedPropertyPanel,
 } from "selectors/propertyPaneSelectors";
-import {
-  getLastQueryTab,
-  getQueryPaneConfigSelectedTabIndex,
-  getQueryPaneDebuggerState,
-} from "selectors/queryPaneSelectors";
+import { getLastQueryTab } from "ee/selectors/appIDESelectors";
 import { getDebuggerContext } from "selectors/debuggerSelectors";
 import { setDebuggerContext } from "actions/debuggerActions";
 import { DefaultDebuggerContext } from "reducers/uiReducers/debuggerReducer";
@@ -81,17 +63,25 @@ import { JSEditorTab } from "reducers/uiReducers/jsPaneReducer";
 import {
   getSelectedDatasourceId,
   getSelectedEntityUrl,
-} from "@appsmith/navigation/FocusSelectors";
+} from "ee/navigation/FocusSelectors";
 import {
   setSelectedDatasource,
   setSelectedEntityUrl,
   setSelectedJSObject,
   setSelectedQuery,
-} from "@appsmith/navigation/FocusSetters";
+} from "ee/navigation/FocusSetters";
 import { getFirstDatasourceId } from "selectors/datasourceSelectors";
 import { FocusElement, FocusElementConfigType } from "navigation/FocusElements";
 import type { FocusElementsConfigList } from "sagas/FocusRetentionSaga";
-import { ActionExecutionResizerHeight } from "pages/Editor/APIEditor/constants";
+import { ActionExecutionResizerHeight } from "PluginActionEditor/components/PluginActionResponse/constants";
+import {
+  getPluginActionConfigSelectedTab,
+  getPluginActionDebuggerState,
+  setPluginActionEditorDebuggerState,
+  setPluginActionEditorSelectedTab,
+} from "PluginActionEditor/store";
+import { EDITOR_TABS } from "constants/QueryEditorConstants";
+import { API_EDITOR_TABS } from "PluginActionEditor/constants/CommonApiConstants";
 
 export const AppIDEFocusElements: FocusElementsConfigList = {
   [FocusEntity.DATASOURCE_LIST]: [
@@ -147,51 +137,24 @@ export const AppIDEFocusElements: FocusElementsConfigList = {
     },
     {
       type: FocusElementConfigType.Redux,
-      name: FocusElement.QueryPaneConfigTabs,
-      selector: getQueryPaneConfigSelectedTabIndex,
-      setter: setQueryPaneConfigSelectedTabIndex,
-      defaultValue: 0,
-    },
-    {
-      type: FocusElementConfigType.Redux,
-      name: FocusElement.ApiPaneConfigTabs,
-      selector: getApiPaneConfigSelectedTabIndex,
-      setter: setApiPaneConfigSelectedTabIndex,
-      defaultValue: 0,
+      name: FocusElement.PluginActionConfigTabs,
+      selector: getPluginActionConfigSelectedTab,
+      setter: setPluginActionEditorSelectedTab,
+      defaultValue: EDITOR_TABS.QUERY,
       subTypes: {
         [PluginPackageName.GRAPHQL]: {
-          defaultValue: 2,
+          defaultValue: API_EDITOR_TABS.BODY,
+        },
+        [PluginPackageName.REST_API]: {
+          defaultValue: API_EDITOR_TABS.HEADERS,
         },
       },
     },
     {
       type: FocusElementConfigType.Redux,
-      name: FocusElement.InputField,
-      selector: getFocusableInputField,
-      setter: setFocusableInputField,
-    },
-    {
-      type: FocusElementConfigType.Redux,
-      name: FocusElement.ApiRightPaneTabs,
-      selector: getApiRightPaneSelectedTab,
-      setter: setApiRightPaneSelectedTab,
-    },
-    {
-      type: FocusElementConfigType.Redux,
-      name: FocusElement.QueryDebugger,
-      selector: getQueryPaneDebuggerState,
-      setter: setQueryPaneDebuggerState,
-      defaultValue: {
-        open: false,
-        responseTabHeight: ActionExecutionResizerHeight,
-        selectedTab: undefined,
-      },
-    },
-    {
-      type: FocusElementConfigType.Redux,
-      name: FocusElement.ApiDebugger,
-      selector: getApiPaneDebuggerState,
-      setter: setApiPaneDebuggerState,
+      name: FocusElement.PluginActionDebugger,
+      selector: getPluginActionDebuggerState,
+      setter: setPluginActionEditorDebuggerState,
       defaultValue: {
         open: false,
         responseTabHeight: ActionExecutionResizerHeight,

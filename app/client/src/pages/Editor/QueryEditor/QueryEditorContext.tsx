@@ -1,21 +1,16 @@
-import type { ReduxAction } from "@appsmith/constants/ReduxActionConstants";
+import type { ReduxAction } from "actions/ReduxActionTypes";
+import type { SaveActionNameParams } from "PluginActionEditor";
 import React, { createContext, useMemo } from "react";
-
-interface SaveActionNameParams {
-  id: string;
-  name: string;
-}
 
 interface QueryEditorContextContextProps {
   moreActionsMenu?: React.ReactNode;
   onCreateDatasourceClick?: () => void;
   onEntityNotFoundBackClick?: () => void;
-  changeQueryPage?: (queryId: string) => void;
+  changeQueryPage?: (baseQueryId: string) => void;
   actionRightPaneBackLink?: React.ReactNode;
-  saveActionName?: (
+  saveActionName: (
     params: SaveActionNameParams,
   ) => ReduxAction<SaveActionNameParams>;
-  closeEditorLink?: React.ReactNode;
   actionRightPaneAdditionSections?: React.ReactNode;
   showSuggestedWidgets?: boolean;
   notification?: string | React.ReactNode;
@@ -33,7 +28,6 @@ export function QueryEditorContextProvider({
   actionRightPaneBackLink,
   changeQueryPage,
   children,
-  closeEditorLink,
   moreActionsMenu,
   notification,
   onCreateDatasourceClick,
@@ -46,7 +40,6 @@ export function QueryEditorContextProvider({
       actionRightPaneBackLink,
       actionRightPaneAdditionSections,
       changeQueryPage,
-      closeEditorLink,
       moreActionsMenu,
       onCreateDatasourceClick,
       onEntityNotFoundBackClick,
@@ -58,7 +51,6 @@ export function QueryEditorContextProvider({
       actionRightPaneBackLink,
       actionRightPaneAdditionSections,
       changeQueryPage,
-      closeEditorLink,
       moreActionsMenu,
       onCreateDatasourceClick,
       onEntityNotFoundBackClick,

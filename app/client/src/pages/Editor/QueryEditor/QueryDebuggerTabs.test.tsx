@@ -6,10 +6,10 @@ import { ThemeProvider } from "styled-components";
 import { unitTestBaseMockStore } from "layoutSystems/common/dropTarget/unitTestUtils";
 import { lightTheme } from "selectors/themeSelectors";
 import { BrowserRouter as Router } from "react-router-dom";
-import { EditorViewMode } from "@appsmith/entities/IDE/constants";
+import { EditorViewMode } from "ee/entities/IDE/constants";
 import "@testing-library/jest-dom/extend-expect";
 import QueryDebuggerTabs from "./QueryDebuggerTabs";
-import { ENTITY_TYPE } from "@appsmith/entities/AppsmithConsole/utils";
+import { ENTITY_TYPE } from "ee/entities/AppsmithConsole/utils";
 
 const mockStore = configureStore([]);
 
@@ -24,6 +24,7 @@ const storeState = {
     },
     datasources: {
       structure: {},
+      list: [],
     },
   },
   ui: {
@@ -42,7 +43,7 @@ const storeState = {
         errorCount: 0,
       },
     },
-    queryPane: {
+    pluginActionEditor: {
       debugger: {
         open: true,
         responseTabHeight: 200,
@@ -53,7 +54,7 @@ const storeState = {
 };
 
 describe("ApiResponseView", () => {
-  let store: any;
+  let store = mockStore(storeState);
 
   beforeEach(() => {
     store = mockStore(storeState);

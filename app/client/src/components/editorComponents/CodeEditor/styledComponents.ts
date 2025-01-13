@@ -23,10 +23,13 @@ const getBorderStyle = (
   },
 ) => {
   if (props.hasError) return "var(--ads-v2-color-border-error)";
+
   if (props.editorTheme !== EditorTheme.DARK) {
     if (props.isFocused) return "var(--ads-v2-color-border-emphasis)";
+
     return "var(--ads-v2-color-border)";
   }
+
   return "transparent";
 };
 
@@ -51,6 +54,7 @@ export const EditorWrapper = styled.div<{
   AIEnabled?: boolean;
   mode: string;
   maxHeight?: string | number;
+  showFocusVisible?: boolean;
 }>`
   // Bottom border was getting clipped
   .CodeMirror.cm-s-duotone-light.CodeMirror-wrap {
@@ -80,6 +84,17 @@ export const EditorWrapper = styled.div<{
   text-transform: none;
 
   && {
+    ${(props) =>
+      props.showFocusVisible &&
+      `
+        .CodeMirror-focused {
+          outline: var(--ads-v2-border-width-outline) solid
+            var(--ads-v2-color-outline) !important;
+          outline-offset: var(--ads-v2-offset-outline) !important;
+          z-index: 1 !important;
+        }
+      `}
+
     .CodeMirror-cursor {
       border-right: none;
       border-left-width: 2px;
@@ -387,12 +402,11 @@ export const EditorWrapper = styled.div<{
       }
     }
 
-    &:focus {
+    &:focus-visible {
       .CodeMirror.cm-s-duotone-light {
-        border-color: ${(props) =>
-          props.borderLess
-            ? "none"
-            : "var(--ads-v2-color-border-emphasis-plus)"};
+        outline: var(--ads-v2-border-width-outline) solid
+          var(--ads-v2-color-outline);
+        outline-offset: var(--ads-v2-offset-outline);
       }
     }
 
@@ -411,6 +425,7 @@ export const EditorWrapper = styled.div<{
 
     ${(props) => {
       let height = props.height || "auto";
+
       if (
         (props.size === EditorSize.COMPACT ||
           props.size === EditorSize.COMPACT_RETAIN_FORMATTING) &&
@@ -418,6 +433,7 @@ export const EditorWrapper = styled.div<{
       ) {
         height = props.height || "36px";
       }
+
       return `height: ${height}`;
     }}
   }

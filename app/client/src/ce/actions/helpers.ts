@@ -1,14 +1,14 @@
-import type { EventLocation } from "@appsmith/utils/analyticsUtilTypes";
-import {
-  createNewApiAction,
-  createNewQueryAction,
-} from "actions/apiPaneActions";
+import type { EventLocation } from "ee/utils/analyticsUtilTypes";
 import { createNewJSCollection } from "actions/jsPaneActions";
 import {
   ActionParentEntityType,
   type ActionParentEntityTypeInterface,
-} from "@appsmith/entities/Engine/actionHelpers";
-import { saveActionName } from "actions/pluginActionActions";
+} from "ee/entities/Engine/actionHelpers";
+import {
+  createNewApiAction,
+  createNewQueryAction,
+  saveActionName,
+} from "actions/pluginActionActions";
 import { saveJSObjectName } from "actions/jsActionActions";
 
 export const createNewQueryBasedOnParentEntity = (
@@ -71,6 +71,8 @@ export const createNewApiActionBasedOnEditorType = (
   parentEntityId: string,
   parentEntityType: ActionParentEntityTypeInterface,
   apiType: string,
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (parentEntityId) {
     return createNewAPIBasedOnParentEntity(

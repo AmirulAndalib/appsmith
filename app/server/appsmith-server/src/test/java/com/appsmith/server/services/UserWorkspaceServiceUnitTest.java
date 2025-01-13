@@ -19,14 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -42,7 +40,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @DirtiesContext
 @Slf4j
@@ -250,7 +247,7 @@ public class UserWorkspaceServiceUnitTest {
         cleanup();
         createDummyWorkspaces().blockLast();
 
-        StepVerifier.create(userWorkspaceService.getUserWorkspacesByRecentlyUsedOrder())
+        StepVerifier.create(userWorkspaceService.getUserWorkspacesByRecentlyUsedOrder(null))
                 .assertNext(workspaces -> {
                     assertThat(workspaces).hasSize(4);
                     workspaces.forEach(workspace -> {
@@ -277,7 +274,7 @@ public class UserWorkspaceServiceUnitTest {
         userData.setRecentlyUsedEntityIds(recentlyUsedEntityDTOs);
         doReturn(Mono.just(userData)).when(userDataService).getForCurrentUser();
 
-        StepVerifier.create(userWorkspaceService.getUserWorkspacesByRecentlyUsedOrder())
+        StepVerifier.create(userWorkspaceService.getUserWorkspacesByRecentlyUsedOrder(null))
                 .assertNext(workspaces -> {
                     assertThat(workspaces).hasSize(4);
                     List<String> fetchedWorkspaceIds = new ArrayList<>();

@@ -1,13 +1,10 @@
 @import "~normalize.css";
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 @import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
-@import "~design-system-old/build/css/design-system-old.css";
-@import "~design-system/build/css/design-system.css";
 @import "theme/colors.css";
 @import "theme/defaultTheme.css";
 @import "theme/wds.css";
 @import "assets/fonts/custom/index.css";
-@import "assets/fonts/google/index.css";
 
 :root {
   /* TODO: This needs to be fixed! This override is to maintain branding changes. */
@@ -23,23 +20,6 @@ body {
 
 body.dragging * {
   cursor: grabbing !important;
-}
-
-/**
-  Disable outline completely from all components
-*/
-:focus,
-:focus-visible {
-  outline: none !important;
-  outline-offset: 0 !important;
-}
-
-/**
-  Disable outline for adsv2 select component
-*/
-.ads-v2-select.rc-select-focused {
-  outline: none !important;
-  outline-offset: 0 !important;
 }
 
 #root.overlay {

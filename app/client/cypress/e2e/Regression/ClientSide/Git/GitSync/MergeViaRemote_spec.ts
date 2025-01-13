@@ -1,4 +1,3 @@
-import gitSyncLocators from "../../../../../locators/gitSyncLocators";
 import * as _ from "../../../../../support/Objects/ObjectsCore";
 import {
   PageLeftPane,
@@ -29,7 +28,18 @@ let repoName: any;
 
 describe(
   "Git sync: Merge changes via remote",
-  { tags: ["@tag.Git"] },
+  {
+    tags: [
+      "@tag.Git",
+      "@tag.AccessControl",
+      "@tag.Workflows",
+      "@tag.Module",
+      "@tag.Theme",
+      "@tag.JS",
+      "@tag.Container",
+      "@tag.ImportExport",
+    ],
+  },
   function () {
     before(() => {
       _.homePage.NavigateToHome();
@@ -58,7 +68,7 @@ describe(
       cy.Createpage("NewPage");
       cy.commitAndPush();
       cy.merge(mainBranch);
-      cy.get(gitSyncLocators.closeGitSyncModal).click();
+      _.gitSync.CloseOpsModal();
       cy.wait(4000);
       cy.switchGitBranch(mainBranch);
       cy.wait(4000); // wait for switch branch
@@ -66,13 +76,13 @@ describe(
     });
 
     it("2. Clicking '+' icon on bottom bar should open deploy popup", function () {
-      cy.get(gitSyncLocators.bottomBarCommitButton).click({ force: true });
-      cy.get(gitSyncLocators.gitSyncModal).should("exist");
-      cy.get("[data-testid=t--tab-DEPLOY]").should("exist");
-      cy.get("[data-testid=t--tab-DEPLOY]")
+      cy.get(_.gitSync.locators.quickActionsCommitBtn).click({ force: true });
+      cy.get(_.gitSync.locators.opsModal).should("exist");
+      cy.get(_.gitSync.locators.opsModalTabDeploy).should("exist");
+      cy.get(_.gitSync.locators.opsModalTabDeploy)
         .invoke("attr", "aria-selected")
         .should("eq", "true");
-      cy.get(gitSyncLocators.closeGitSyncModal).click({ force: true });
+      _.gitSync.CloseOpsModal();
     });
 
     it("3. Checks clean url updates across branches", () => {
@@ -88,8 +98,8 @@ describe(
       cy.wait("@getConsolidatedData").then((intercept2) => {
         const { application, pages } = intercept2.response.body.data.pages.data;
         const defaultPage = pages.find((p) => p.isDefault);
-        legacyPathname = `/applications/${application.id}/pages/${defaultPage.id}`;
-        newPathname = `/app/${application.slug}/${defaultPage.slug}-${defaultPage.id}`;
+        legacyPathname = `/applications/${application.baseId}/pages/${defaultPage.baseId}`;
+        newPathname = `/app/${application.slug}/${defaultPage.slug}-${defaultPage.baseId}`;
       });
 
       cy.location().should((location) => {

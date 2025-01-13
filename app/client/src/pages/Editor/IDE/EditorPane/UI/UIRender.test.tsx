@@ -2,16 +2,16 @@ import React from "react";
 import { Route } from "react-router-dom";
 import { render } from "test/testUtils";
 import IDE from "pages/Editor/IDE/index";
-import { BUILDER_PATH } from "@appsmith/constants/routes/appRoutes";
+import { BUILDER_PATH } from "ee/constants/routes/appRoutes";
 import { getIDETestState } from "test/factories/AppIDEFactoryUtils";
 import { PageFactory } from "test/factories/PageFactory";
-import { EDITOR_PANE_TEXTS, createMessage } from "@appsmith/constants/messages";
+import { EDITOR_PANE_TEXTS, createMessage } from "ee/constants/messages";
 import { UpdatedEditor } from "test/testMockedWidgets";
 import {
   buildChildren,
   widgetCanvasFactory,
 } from "test/factories/WidgetFactoryUtils";
-import { EditorViewMode } from "@appsmith/entities/IDE/constants";
+import { EditorViewMode } from "ee/entities/IDE/constants";
 
 const FeatureFlags = {
   rollout_side_by_side_enabled: true,
@@ -72,6 +72,8 @@ describe("IDE URL rendering: UI", () => {
     });
 
     const widgetID = "tableWidgetId";
+    // TODO: Fix this the next time the file is edited
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const children: any = buildChildren([
       {
         type: "TABLE_WIDGET",
@@ -82,15 +84,18 @@ describe("IDE URL rendering: UI", () => {
         widgetId: widgetID,
       },
     ]);
+    // TODO: Fix this the next time the file is edited
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dsl: any = widgetCanvasFactory.build({
       children,
     });
+
     dsl.bottomRow = 250;
 
     const url =
       `/app/applicationSlug/pageSlug-${pageId}/edit/widgets/` + widgetID;
 
-    const { getByTestId } = render(
+    const component = render(
       <Route path={BUILDER_PATH}>
         <UpdatedEditor dsl={dsl} />
       </Route>,
@@ -101,8 +106,11 @@ describe("IDE URL rendering: UI", () => {
       },
     );
 
+    // wait for the dom to settle down by waitng for the canvas to be loaded
+    await component.findByTestId("t--canvas-artboard");
+
     // check for list UI
-    getByTestId(`t--entity-item-${children[0].widgetName}`);
+    component.getByTestId(`t--entity-item-${children[0].widgetName}`);
   });
 
   it("Canvas: Check tabs rendering in side by side mode", () => {

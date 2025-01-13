@@ -4,19 +4,22 @@ import Canvas from "pages/Editor/Canvas";
 import IDE from "pages/Editor/IDE";
 import React from "react";
 import { useSelector } from "react-redux";
-import { getCanvasWidgetsStructure } from "@appsmith/selectors/entitiesSelector";
+import { getCanvasWidgetsStructure } from "ee/selectors/entitiesSelector";
 import { useMockDsl } from "./testCommon";
 
 export function MockCanvas() {
   const canvasWidgetsStructure = useSelector(getCanvasWidgetsStructure);
+
   return <Canvas canvasWidth={0} widgetsStructure={canvasWidgetsStructure} />;
 }
 
-export function UpdateAppViewer({ dsl }: any) {
-  useMockDsl(dsl, APP_MODE.PUBLISHED);
-  return <AppViewerPageContainer />;
+export function UpdateAppViewer({ dsl }: { dsl: unknown }) {
+  const hasLoaded = useMockDsl(dsl, APP_MODE.PUBLISHED);
+
+  return hasLoaded ? <AppViewerPageContainer /> : null;
 }
-export function UpdatedEditor({ dsl }: any) {
-  useMockDsl(dsl, APP_MODE.EDIT);
-  return <IDE />;
+export function UpdatedEditor({ dsl }: { dsl: unknown }) {
+  const hasLoaded = useMockDsl(dsl, APP_MODE.EDIT);
+
+  return hasLoaded ? <IDE /> : null;
 }

@@ -29,7 +29,7 @@ const jsObjectBody = `export default {
 	}
 }`;
 
-describe("Autocomplete tests", { tags: ["@tag.JS"] }, () => {
+describe("Autocomplete tests", { tags: ["@tag.JS", "@tag.Binding"] }, () => {
   it("1. Bug #13613 Verify widgets autocomplete: ButtonGroup & Document viewer widget", () => {
     entityExplorer.DragDropWidgetNVerify(
       draggableWidgets.BUTTON_GROUP,
@@ -298,7 +298,7 @@ describe("Autocomplete tests", { tags: ["@tag.JS"] }, () => {
           )
           .type(".");
 
-        agHelper.GetNAssertElementText(locators._hints, "geolocation");
+        agHelper.GetNAssertElementText(locators._hints, "appName");
       });
   });
 
@@ -313,6 +313,6 @@ describe("Autocomplete tests", { tags: ["@tag.JS"] }, () => {
       .type("{downArrow}{leftArrow}{leftArrow}");
 
     agHelper.TypeText(locators._codeMirrorTextArea, ".");
-    agHelper.GetNAssertElementText(locators._hints, "geolocation");
+    agHelper.GetNAssertElementText(locators._hints, "appName");
   });
 });

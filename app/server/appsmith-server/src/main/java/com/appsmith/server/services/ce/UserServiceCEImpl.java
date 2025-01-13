@@ -1,6 +1,5 @@
 package com.appsmith.server.services.ce;
 
-import com.appsmith.external.helpers.AppsmithBeanUtils;
 import com.appsmith.external.helpers.EncryptionHelper;
 import com.appsmith.server.acl.AclPermission;
 import com.appsmith.server.configurations.CommonConfig;
@@ -44,6 +43,7 @@ import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -510,7 +510,8 @@ public class UserServiceCEImpl extends BaseService<UserRepository, User, String>
      * @param user User object representing the user to be created/enabled.
      * @return Publishes the user object, after having been saved.
      */
-    private Mono<User> signupIfAllowed(User user) {
+    @Override
+    public Mono<User> signupIfAllowed(User user) {
         boolean isAdminUser = false;
 
         if (!commonConfig.getAdminEmails().contains(user.getEmail())) {
@@ -569,6 +570,15 @@ public class UserServiceCEImpl extends BaseService<UserRepository, User, String>
         return userFromRepository.flatMap(existingUser -> this.update(existingUser, update));
     }
 
+    @Override
+    public Mono<Integer> updateWithoutPermission(String id, UpdateDefinition updateObj) {
+        Mono<User> userFromRepository = repository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new AppsmithException(AppsmithError.NO_RESOURCE_FOUND, FieldName.USER, id)));
+
+        return userFromRepository.flatMap(existingUser -> repository.updateById(id, updateObj));
+    }
+
     private Mono<User> update(User existingUser, User userUpdate) {
 
         // The password is being updated. Hash it first and then store it
@@ -576,8 +586,7 @@ public class UserServiceCEImpl extends BaseService<UserRepository, User, String>
             userUpdate.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
         }
 
-        AppsmithBeanUtils.copyNewFieldValuesIntoOldObject(userUpdate, existingUser);
-        return repository.save(existingUser);
+        return repository.updateById(existingUser.getId(), userUpdate, null);
     }
 
     private boolean validateName(String name) {
@@ -603,6 +612,8 @@ public class UserServiceCEImpl extends BaseService<UserRepository, User, String>
                 return Mono.error(new AppsmithException(AppsmithError.INVALID_PARAMETER, FieldName.NAME));
             }
             updates.setName(inputName);
+            // Set policies to null to avoid overriding them.
+            updates.setPolicies(null);
             updatedUserMono = sessionUserService
                     .getCurrentUser()
                     .flatMap(user -> updateWithoutPermission(user.getId(), updates)
@@ -618,9 +629,6 @@ public class UserServiceCEImpl extends BaseService<UserRepository, User, String>
 
         if (allUpdates.hasUserDataUpdates()) {
             final UserData updates = new UserData();
-            if (StringUtils.hasLength(allUpdates.getRole())) {
-                updates.setRole(allUpdates.getRole());
-            }
             if (StringUtils.hasLength(allUpdates.getProficiency())) {
                 updates.setProficiency(allUpdates.getProficiency());
             }

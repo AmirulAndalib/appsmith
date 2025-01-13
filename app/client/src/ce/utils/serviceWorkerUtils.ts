@@ -2,25 +2,28 @@ import { Mutex } from "async-mutex";
 import { APP_MODE } from "entities/App";
 import type { Match, TokensToRegexpOptions } from "path-to-regexp";
 import { match } from "path-to-regexp";
-
-const BUILDER_PATH = `/app/:applicationSlug/:pageSlug(.*\-):pageId/edit`;
-const BUILDER_CUSTOM_PATH = `/app/:customSlug(.*\-):pageId/edit`;
-const VIEWER_PATH = `/app/:applicationSlug/:pageSlug(.*\-):pageId`;
-const VIEWER_CUSTOM_PATH = `/app/:customSlug(.*\-):pageId`;
-const BUILDER_PATH_DEPRECATED = `/applications/:applicationId/pages/:pageId/edit`;
-const VIEWER_PATH_DEPRECATED = `/applications/:applicationId/pages/:pageId`;
+import {
+  BUILDER_PATH,
+  BUILDER_CUSTOM_PATH,
+  VIEWER_PATH,
+  VIEWER_CUSTOM_PATH,
+  BUILDER_PATH_DEPRECATED,
+  VIEWER_PATH_DEPRECATED,
+} from "../constants/routes/appRoutes";
 
 interface TMatchResult {
-  pageId?: string;
-  applicationId?: string;
+  basePageId?: string;
+  baseApplicationId?: string;
+  applicationSlug?: string;
 }
 
 export interface TApplicationParams {
   origin: string;
-  pageId?: string;
-  applicationId?: string;
+  basePageId?: string;
+  baseApplicationId?: string;
   branchName: string;
   appMode: APP_MODE;
+  applicationSlug?: string;
 }
 
 type TApplicationParamsOrNull = TApplicationParams | null;
@@ -51,37 +54,41 @@ export const matchViewerPath = (pathName: string) =>
  */
 export const getSearchQuery = (search = "", key: string) => {
   const params = new URLSearchParams(search);
+
   return decodeURIComponent(params.get(key) || "");
 };
 
 export const getApplicationParamsFromUrl = (
-  url: URL,
+  urlParams: Pick<URL, "origin" | "pathname" | "search">,
 ): TApplicationParamsOrNull => {
+  const { origin, pathname, search } = urlParams;
   // Get the branch name from the query string
-  const branchName = getSearchQuery(url.search, "branch");
+  const branchName = getSearchQuery(search, "branch");
 
-  const matchedBuilder: Match<TMatchResult> = matchBuilderPath(url.pathname, {
+  const matchedBuilder: Match<TMatchResult> = matchBuilderPath(pathname, {
     end: false,
   });
-  const matchedViewer: Match<TMatchResult> = matchViewerPath(url.pathname);
+  const matchedViewer: Match<TMatchResult> = matchViewerPath(pathname);
 
   if (matchedBuilder) {
     return {
-      origin: url.origin,
-      pageId: matchedBuilder.params.pageId,
-      applicationId: matchedBuilder.params.applicationId,
+      origin,
+      basePageId: matchedBuilder.params.basePageId,
+      baseApplicationId: matchedBuilder.params.baseApplicationId,
       branchName,
       appMode: APP_MODE.EDIT,
+      applicationSlug: matchedBuilder.params.applicationSlug,
     };
   }
 
   if (matchedViewer) {
     return {
-      origin: url.origin,
-      pageId: matchedViewer.params.pageId,
-      applicationId: matchedViewer.params.applicationId,
+      origin,
+      basePageId: matchedViewer.params.basePageId,
+      baseApplicationId: matchedViewer.params.baseApplicationId,
       branchName,
       appMode: APP_MODE.PUBLISHED,
+      applicationSlug: matchedViewer.params.applicationSlug,
     };
   }
 
@@ -94,20 +101,20 @@ export const getApplicationParamsFromUrl = (
 export const getConsolidatedApiPrefetchRequest = (
   applicationProps: TApplicationParams,
 ) => {
-  const { applicationId, appMode, branchName, origin, pageId } =
+  const { appMode, baseApplicationId, basePageId, branchName, origin } =
     applicationProps;
 
   const headers = new Headers();
   const searchParams = new URLSearchParams();
 
-  if (!pageId) {
+  if (!basePageId) {
     return null;
   }
 
-  searchParams.append("defaultPageId", pageId);
+  searchParams.append("defaultPageId", basePageId);
 
-  if (applicationId) {
-    searchParams.append("applicationId", applicationId);
+  if (baseApplicationId) {
+    searchParams.append("applicationId", baseApplicationId);
   }
 
   // Add the branch name to the headers
@@ -119,6 +126,7 @@ export const getConsolidatedApiPrefetchRequest = (
   if (appMode === APP_MODE.EDIT) {
     const requestUrl = `${origin}/api/${"v1/consolidated-api/edit"}?${searchParams.toString()}`;
     const request = new Request(requestUrl, { method: "GET", headers });
+
     return request;
   }
 
@@ -126,6 +134,7 @@ export const getConsolidatedApiPrefetchRequest = (
   if (appMode === APP_MODE.PUBLISHED) {
     const requestUrl = `${origin}/api/v1/consolidated-api/view?${searchParams.toString()}`;
     const request = new Request(requestUrl, { method: "GET", headers });
+
     return request;
   }
 
@@ -168,6 +177,7 @@ export class PrefetchApiService {
 
     this.headerKeys.forEach((headerKey) => {
       const headerValue = request.headers.get(headerKey);
+
       if (headerValue) {
         requestKey += `:${headerKey}:${headerValue}`;
       }
@@ -216,12 +226,14 @@ export class PrefetchApiService {
     // Acquire the lock
     await this.aqcuireFetchMutex(request);
     const prefetchApiCache = await caches.open(this.cacheName);
+
     try {
       const response = await fetch(request);
 
       if (response.ok) {
         // Clone the response as the response can be consumed only once
         const clonedResponse = response.clone();
+
         // Put the response in the cache
         await prefetchApiCache.put(request, clonedResponse);
       }

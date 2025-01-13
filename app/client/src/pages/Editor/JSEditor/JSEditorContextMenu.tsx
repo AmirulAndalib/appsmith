@@ -11,7 +11,9 @@ import {
   MenuSubTrigger,
   MenuTrigger,
   Text,
-} from "design-system";
+} from "@appsmith/ads";
+import { useFeatureFlag } from "utils/hooks/useFeatureFlag";
+import { FEATURE_FLAG } from "ee/entities/FeatureFlag";
 
 export interface ContextMenuOption {
   id?: string;
@@ -35,9 +37,14 @@ export function JSEditorContextMenu({
   onMenuClose,
   options,
 }: EntityContextMenuProps) {
+  const isActionRedesignEnabled = useFeatureFlag(
+    FEATURE_FLAG.release_actions_redesign_enabled,
+  );
+
   if (options.length === 0) {
     return null;
   }
+
   return (
     <Menu
       className={className}
@@ -49,14 +56,14 @@ export function JSEditorContextMenu({
     >
       <MenuTrigger>
         <Button
-          data-testid="more-action-trigger"
+          data-testid="t--more-action-trigger"
           isIconButton
           kind="tertiary"
-          size="md"
-          startIcon="context-menu"
+          size={isActionRedesignEnabled ? "sm" : "md"}
+          startIcon={isActionRedesignEnabled ? "more-2-fill" : "context-menu"}
         />
       </MenuTrigger>
-      <MenuContent avoidCollisions>
+      <MenuContent align="end" avoidCollisions>
         {options.map((option, index) => {
           if (option.children) {
             return (
@@ -74,10 +81,13 @@ export function JSEditorContextMenu({
               </MenuSub>
             );
           }
+
           return (
             <MenuItem
               className={option?.className}
               key={option.value}
+              // TODO: Fix this the next time the file is edited
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onSelect={option.onSelect as any}
               startIcon={option.icon}
             >

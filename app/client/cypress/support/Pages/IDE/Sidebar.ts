@@ -2,7 +2,7 @@ export class Sidebar {
   buttons: string[];
   locators = {
     sidebar: ".t--sidebar",
-    sidebarButton: (name: string) => `.t--sidebar-${name}`,
+    sidebarButton: (name: string) => `[data-testid='t--sidebar-${name}']`,
   };
 
   constructor(buttons: string[]) {
@@ -22,7 +22,7 @@ export class Sidebar {
     );
   }
 
-  assertVisible(timeout?: number) {
+  assertVisible(timeout: number = 10000) {
     cy.get(this.locators.sidebar, { timeout }).should("be.visible");
   }
 }
