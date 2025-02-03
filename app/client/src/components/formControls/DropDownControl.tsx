@@ -1,13 +1,12 @@
 import React from "react";
 import type { ControlProps } from "./BaseControl";
 import BaseControl from "./BaseControl";
-import styled from "styled-components";
 import type { ControlType } from "constants/PropertyControlConstants";
 import { get, isEmpty, isNil } from "lodash";
 import type { WrappedFieldInputProps, WrappedFieldMetaProps } from "redux-form";
 import { Field } from "redux-form";
 import { connect } from "react-redux";
-import type { AppState } from "@appsmith/reducers";
+import type { AppState } from "ee/reducers";
 import { getDynamicFetchedValues } from "selectors/formSelectors";
 import { change, getFormValues } from "redux-form";
 import {
@@ -16,15 +15,9 @@ import {
   MATCH_ACTION_CONFIG_PROPERTY,
 } from "workers/Evaluation/formEval";
 import type { Action } from "entities/Action";
-import type { SelectOptionProps } from "design-system";
-import { Icon, Option, Select } from "design-system";
-
-const DropdownSelect = styled.div<{
-  width: string;
-}>`
-  /* font-size: 14px; */
-  width: ${(props) => (props?.width ? props?.width : "270px")};
-`;
+import type { SelectOptionProps } from "@appsmith/ads";
+import { Icon, Option, OptGroup, Select } from "@appsmith/ads";
+import { objectKeys } from "@appsmith/utils";
 
 class DropDownControl extends BaseControl<Props> {
   componentDidUpdate(prevProps: Props) {
@@ -44,11 +37,13 @@ class DropDownControl extends BaseControl<Props> {
         dependencies.forEach((dependencyPath) => {
           const prevValue = get(prevProps?.formValues, dependencyPath);
           const currentValue = get(this.props?.formValues, dependencyPath);
+
           if (prevValue !== currentValue) {
             hasDependenciesChanged = true;
           }
         });
       }
+
       if (hasDependenciesChanged) {
         this.props.updateConfigPropertyValue(
           this.props.formName,
@@ -70,6 +65,7 @@ class DropDownControl extends BaseControl<Props> {
         this.props?.formValues,
         FormDataPaths.COMMAND,
       );
+
       if (prevCommandValue !== currentCommandValue) {
         this.props.updateConfigPropertyValue(
           this.props.formName,
@@ -90,11 +86,10 @@ class DropDownControl extends BaseControl<Props> {
     };
 
     return (
-      <DropdownSelect
-        className={`t--${this?.props?.configProperty}`}
+      <div
+        className={`t--${this?.props?.configProperty} uqi-dropdown-select`}
         data-testid={this.props.configProperty}
         style={styles}
-        width={styles.width}
       >
         <Field
           component={renderDropdown}
@@ -102,7 +97,7 @@ class DropDownControl extends BaseControl<Props> {
           props={{ ...this.props, width: styles.width }}
           type={this.props?.isMultiSelect ? "select-multiple" : undefined}
         />
-      </DropdownSelect>
+      </div>
     );
   }
 
@@ -119,6 +114,7 @@ function renderDropdown(
   } & DropDownControlProps,
 ): JSX.Element {
   let selectedValue: string | string[];
+
   if (isEmpty(props.input?.value)) {
     if (props.isMultiSelect)
       selectedValue = props?.initialValue ? (props.initialValue as string) : [];
@@ -126,6 +122,7 @@ function renderDropdown(
       selectedValue = props?.initialValue
         ? (props.initialValue as string[])
         : "";
+
       if (props.setFirstOptionAsDefault && props.options.length > 0) {
         selectedValue = props.options[0].value as string;
         props.input?.onChange(selectedValue);
@@ -133,6 +130,7 @@ function renderDropdown(
     }
   } else {
     selectedValue = props.input?.value;
+
     if (props.isMultiSelect) {
       if (!Array.isArray(selectedValue)) {
         selectedValue = [selectedValue];
@@ -141,8 +139,12 @@ function renderDropdown(
       }
     }
   }
+
   let options: SelectOptionProps[] = [];
+  let optionGroupConfig: Record<string, DropDownGroupedOptionsInterface> = {};
+  let groupedOptions: DropDownGroupedOptionsInterface[] = [];
   let selectedOptions: SelectOptionProps[] = [];
+
   if (typeof props.options === "object" && Array.isArray(props.options)) {
     options = props.options;
     selectedOptions =
@@ -152,6 +154,55 @@ function renderDropdown(
         else return selectedValue === option.value;
       }) || [];
   }
+
+  const defaultOptionGroupType = "others";
+  const defaultOptionGroupConfig: DropDownGroupedOptionsInterface = {
+    label: "Others",
+    children: [],
+  };
+
+  // For grouping, 2 components are needed
+  // 1) optionGroupConfig: used to render the label text and allows for future expansions
+  // related to UI of the group label
+  // 2) each option should mention a optionGroupType which will help to group the option inside
+  // the group. If not present or the type is not defined in the optionGroupConfig then it will be
+  // added to the default group mentioned above.
+  if (
+    !!props.optionGroupConfig &&
+    typeof props.optionGroupConfig === "object"
+  ) {
+    optionGroupConfig = props.optionGroupConfig;
+    options.forEach((opt) => {
+      let optionGroupType = defaultOptionGroupType;
+      let groupConfig: DropDownGroupedOptionsInterface;
+
+      if (Object.hasOwn(opt, "optionGroupType") && !!opt.optionGroupType) {
+        optionGroupType = opt.optionGroupType;
+      }
+
+      if (Object.hasOwn(optionGroupConfig, optionGroupType)) {
+        groupConfig = optionGroupConfig[optionGroupType];
+      } else {
+        // if optionGroupType is not defined in optionGroupConfig
+        // use the default group config
+        groupConfig = defaultOptionGroupConfig;
+      }
+
+      const groupChildren = groupConfig?.children || [];
+
+      groupChildren.push(opt);
+      groupConfig["children"] = groupChildren;
+      optionGroupConfig[optionGroupType] = groupConfig;
+    });
+
+    groupedOptions = [];
+    objectKeys(optionGroupConfig).forEach(
+      (key) =>
+        optionGroupConfig[key].children.length > 0 &&
+        groupedOptions.push(optionGroupConfig[key]),
+    );
+  }
+
   // Function to handle selection of options
   const onSelectOptions = (value: string | undefined) => {
     if (!isNil(value)) {
@@ -163,6 +214,7 @@ function renderDropdown(
           selectedValue = [selectedValue as string, value];
         }
       } else selectedValue = value;
+
       props.input?.onChange(selectedValue);
     }
   };
@@ -181,24 +233,42 @@ function renderDropdown(
           selectedValue = [];
         }
       } else selectedValue = "";
+
       props.input?.onChange(selectedValue);
     }
   };
 
-  if (props.options.length > 0) {
+  const clearAllOptions = () => {
+    if (!isNil(selectedValue)) {
+      if (props.isMultiSelect) {
+        if (Array.isArray(selectedValue)) {
+          selectedValue = [];
+          props.input?.onChange([]);
+        }
+      } else {
+        selectedValue = "";
+        props.input?.onChange("");
+      }
+    }
+  };
+
+  if (options.length > 0) {
     if (props.isMultiSelect) {
       const tempSelectedValues: string[] = [];
+
       selectedOptions.forEach((option: SelectOptionProps) => {
         if (selectedValue.includes(option.value as string)) {
           tempSelectedValues.push(option.value as string);
         }
       });
+
       if (tempSelectedValues.length !== selectedValue.length) {
         selectedValue = [...tempSelectedValues];
         props.input?.onChange(tempSelectedValues);
       }
     } else {
       let tempSelectedValues = "";
+
       selectedOptions.forEach((option: SelectOptionProps) => {
         if (selectedValue === (option.value as string)) {
           tempSelectedValues = option.value as string;
@@ -214,14 +284,15 @@ function renderDropdown(
       }
 
       const isOptionDynamic = options.some((opt) => "disabled" in opt);
+
       if (isOptionDynamic && !!props?.isRequired) {
         const isCurrentOptionDisabled = options.some(
           (opt) => opt?.value === selectedValue && opt.disabled,
         );
+
         if (!tempSelectedValues || isCurrentOptionDisabled) {
-          const firstEnabledOption = props?.options.find(
-            (opt) => !opt?.disabled,
-          );
+          const firstEnabledOption = options.find((opt) => !opt?.disabled);
+
           if (firstEnabledOption) {
             selectedValue = firstEnabledOption?.value as string;
             props.input?.onChange(firstEnabledOption?.value);
@@ -233,37 +304,54 @@ function renderDropdown(
 
   return (
     <Select
+      allowClear={props.isMultiSelect && !isEmpty(selectedValue)}
       data-testid={`t--dropdown-${props?.configProperty}`}
       defaultValue={props.initialValue}
       isDisabled={props.disabled}
       isLoading={props.isLoading}
       isMultiSelect={props?.isMultiSelect}
+      onClear={clearAllOptions}
       onDeselect={onRemoveOptions}
       onSelect={(value) => onSelectOptions(value)}
       placeholder={props?.placeholderText}
       showSearch={props.isSearchable}
       value={props.isMultiSelect ? selectedOptions : selectedOptions[0]}
     >
-      {options.map((option) => {
-        return (
-          <Option
-            aria-label={option.label}
-            disabled={option.disabled}
-            isDisabled={option.isDisabled}
-            key={option.value}
-            value={option.value}
-          >
-            {option.icon && <Icon color={option.color} name={option.icon} />}
-            {option.label}
-          </Option>
-        );
-      })}
+      {groupedOptions.length === 0
+        ? options.map(renderOptionWithIcon)
+        : groupedOptions.map(({ children, label }) => {
+            return (
+              <OptGroup aria-label={label} key={label}>
+                {children.map(renderOptionWithIcon)}
+              </OptGroup>
+            );
+          })}
     </Select>
   );
 }
 
+function renderOptionWithIcon(option: SelectOptionProps) {
+  return (
+    <Option
+      aria-label={option.label}
+      disabled={option.disabled}
+      isDisabled={option.isDisabled}
+      value={option.value}
+    >
+      {option.icon && <Icon color={option.color} name={option.icon} />}
+      {option.label}
+    </Option>
+  );
+}
+
+export interface DropDownGroupedOptionsInterface {
+  label: string;
+  children: SelectOptionProps[];
+}
+
 export interface DropDownControlProps extends ControlProps {
   options: SelectOptionProps[];
+  optionGroupConfig?: Record<string, DropDownGroupedOptionsInterface>;
   optionWidth?: string;
   placeholderText: string;
   propertyValue: string;
@@ -280,6 +368,8 @@ interface ReduxDispatchProps {
   updateConfigPropertyValue: (
     formName: string,
     field: string,
+    // TODO: Fix this the next time the file is edited
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
   ) => void;
 }
@@ -302,16 +392,24 @@ const mapStateToProps = (
   try {
     if (ownProps.fetchOptionsConditionally) {
       const dynamicFetchedValues = getDynamicFetchedValues(state, ownProps);
+
       isLoading = dynamicFetchedValues.isLoading;
       options = dynamicFetchedValues.data;
     }
   } catch (e) {
+    // Printing error to console
+    // eslint-disable-next-line no-console
+    console.error(e);
   } finally {
     return { isLoading, options, formValues };
   }
 };
 
+// TODO: Fix this the next time the file is edited
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapDispatchToProps = (dispatch: any): ReduxDispatchProps => ({
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateConfigPropertyValue: (formName: string, field: string, value: any) => {
     dispatch(change(formName, field, value));
   },

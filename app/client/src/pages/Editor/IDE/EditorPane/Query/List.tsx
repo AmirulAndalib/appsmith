@@ -1,40 +1,55 @@
-import React from "react";
-import { Button, Flex, Text } from "design-system";
+import React, { useState } from "react";
+import {
+  Flex,
+  Text,
+  SearchAndAdd,
+  NoSearchResults,
+  EntityGroupsList,
+} from "@appsmith/ads";
 import { useSelector } from "react-redux";
 
-import { getHasCreateActionPermission } from "@appsmith/utils/BusinessFeatures/permissionPageHelpers";
-import { useActiveAction } from "@appsmith/pages/Editor/Explorer/hooks";
-import {
-  getCurrentApplicationId,
-  getPagePermissions,
-} from "selectors/editorSelectors";
+import { useActiveActionBaseId } from "ee/pages/Editor/Explorer/hooks";
 import { useFeatureFlag } from "utils/hooks/useFeatureFlag";
-import { FEATURE_FLAG } from "@appsmith/entities/FeatureFlag";
-import { getCurrentPageId } from "@appsmith/selectors/entitiesSelector";
-import { selectQuerySegmentEditorList } from "@appsmith/selectors/appIDESelectors";
-import { ActionParentEntityType } from "@appsmith/entities/Engine/actionHelpers";
+import { FEATURE_FLAG } from "ee/entities/FeatureFlag";
+import { selectQuerySegmentEditorList } from "ee/selectors/appIDESelectors";
+import { ActionParentEntityType } from "ee/entities/Engine/actionHelpers";
 import { FilesContextProvider } from "pages/Editor/Explorer/Files/FilesContextProvider";
-import { createMessage, EDITOR_PANE_TEXTS } from "@appsmith/constants/messages";
-import { useQueryAdd } from "@appsmith/pages/Editor/IDE/EditorPane/Query/hooks";
-import { QueryListItem } from "@appsmith/pages/Editor/IDE/EditorPane/Query/ListItem";
-import { getShowWorkflowFeature } from "@appsmith/selectors/workflowSelectors";
+import { useQueryAdd } from "ee/pages/Editor/IDE/EditorPane/Query/hooks";
+import { QueryListItem } from "ee/pages/Editor/IDE/EditorPane/Query/old/ListItem";
+import { getShowWorkflowFeature } from "ee/selectors/workflowSelectors";
 import { BlankState } from "./BlankState";
+import { EDITOR_PANE_TEXTS, createMessage } from "ee/constants/messages";
+import { filterEntityGroupsBySearchTerm } from "IDE/utils";
+import type { EntityItem } from "ee/entities/IDE/constants";
+import { ActionEntityItem } from "ee/pages/Editor/IDE/EditorPane/Query/ListItem";
+import { useLocation } from "react-router";
+import { getIDETypeByUrl } from "ee/entities/IDE/utils";
+import { useParentEntityInfo } from "ee/IDE/hooks/useParentEntityInfo";
+import { useCreateActionsPermissions } from "ee/entities/IDE/hooks/useCreateActionsPermissions";
+import { objectKeys } from "@appsmith/utils";
 
 const ListQuery = () => {
-  const pageId = useSelector(getCurrentPageId) as string;
-  const files = useSelector(selectQuerySegmentEditorList);
-  const activeActionId = useActiveAction();
-  const pagePermissions = useSelector(getPagePermissions);
-  const isFeatureEnabled = useFeatureFlag(FEATURE_FLAG.license_gac_enabled);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemGroups = useSelector(selectQuerySegmentEditorList);
+  const activeActionBaseId = useActiveActionBaseId();
 
-  const canCreateActions = getHasCreateActionPermission(
-    isFeatureEnabled,
-    pagePermissions,
+  const location = useLocation();
+  const ideType = getIDETypeByUrl(location.pathname);
+  const { editorId, parentEntityId } = useParentEntityInfo(ideType);
+  const canCreateActions = useCreateActionsPermissions(ideType);
+
+  const showWorkflows = useSelector(getShowWorkflowFeature);
+
+  const isNewADSTemplatesEnabled = useFeatureFlag(
+    FEATURE_FLAG.release_ads_entity_item_enabled,
   );
-  const applicationId = useSelector(getCurrentApplicationId);
+
+  const filteredItemGroups = filterEntityGroupsBySearchTerm(
+    searchTerm,
+    itemGroups,
+  );
 
   const { openAddQuery } = useQueryAdd();
-  const showWorkflows = useSelector(getShowWorkflowFeature);
 
   return (
     <Flex
@@ -42,63 +57,80 @@ const ListQuery = () => {
       flexDirection="column"
       gap="spaces-3"
       overflow="hidden"
+      px="spaces-3"
       py="spaces-3"
     >
-      {files.length > 0 && canCreateActions && (
-        <Flex flexDirection={"column"} px="spaces-3">
-          <Button
-            className="t--add-item"
-            kind={"secondary"}
-            onClick={openAddQuery}
-            size={"sm"}
-            startIcon={"add-line"}
-          >
-            {createMessage(EDITOR_PANE_TEXTS.query_add_button)}
-          </Button>
-        </Flex>
-      )}
+      {objectKeys(itemGroups).length === 0 && <BlankState />}
+
+      {itemGroups.length > 0 ? (
+        <SearchAndAdd
+          onAdd={openAddQuery}
+          onSearch={setSearchTerm}
+          showAddButton={canCreateActions}
+        />
+      ) : null}
       <Flex
+        data-testid="t--ide-list"
         flexDirection={"column"}
         gap="spaces-4"
         overflowY="auto"
-        px="spaces-3"
       >
-        {files.map(({ group, items }) => {
-          return (
-            <Flex flexDirection={"column"} key={group}>
-              <Flex px="spaces-3" py="spaces-1">
-                <Text
-                  className="overflow-hidden overflow-ellipsis whitespace-nowrap"
-                  kind="body-s"
+        {isNewADSTemplatesEnabled ? (
+          <EntityGroupsList
+            groups={filteredItemGroups.map(({ group, items }) => {
+              return {
+                groupTitle: group,
+                items: items,
+                className: "",
+                renderList: (item: EntityItem) => {
+                  return <ActionEntityItem item={item} />;
+                },
+              };
+            })}
+          />
+        ) : (
+          filteredItemGroups.map(({ group, items }) => {
+            return (
+              <Flex flexDirection={"column"} key={group}>
+                <Flex py="spaces-1">
+                  <Text
+                    className="overflow-hidden overflow-ellipsis whitespace-nowrap"
+                    kind="body-s"
+                  >
+                    {group}
+                  </Text>
+                </Flex>
+                <FilesContextProvider
+                  canCreateActions={canCreateActions}
+                  editorId={editorId}
+                  parentEntityId={parentEntityId}
+                  parentEntityType={ActionParentEntityType.PAGE}
+                  showWorkflows={showWorkflows}
                 >
-                  {group}
-                </Text>
+                  {items.map((file) => {
+                    return (
+                      <QueryListItem
+                        isActive={file.key === activeActionBaseId}
+                        item={file}
+                        key={file.key}
+                        parentEntityId={parentEntityId}
+                      />
+                    );
+                  })}
+                </FilesContextProvider>
               </Flex>
-              <FilesContextProvider
-                canCreateActions={canCreateActions}
-                editorId={applicationId}
-                parentEntityId={pageId}
-                parentEntityType={ActionParentEntityType.PAGE}
-                showWorkflows={showWorkflows}
-              >
-                {items.map((file) => {
-                  return (
-                    <QueryListItem
-                      isActive={file.key === activeActionId}
-                      item={file}
-                      key={file.key}
-                      parentEntityId={pageId}
-                      parentEntityType={ActionParentEntityType.PAGE}
-                    />
-                  );
-                })}
-              </FilesContextProvider>
-            </Flex>
-          );
-        })}
+            );
+          })
+        )}
+        {filteredItemGroups.length === 0 && searchTerm !== "" ? (
+          <NoSearchResults
+            text={createMessage(
+              EDITOR_PANE_TEXTS.empty_search_result,
+              createMessage(EDITOR_PANE_TEXTS.search_objects.queries),
+            )}
+          />
+        ) : null}
       </Flex>
-
-      {Object.keys(files).length === 0 && <BlankState />}
     </Flex>
   );
 };

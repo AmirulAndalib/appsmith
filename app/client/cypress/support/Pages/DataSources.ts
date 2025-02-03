@@ -11,6 +11,9 @@ import EditorNavigation, {
 import datasource from "../../locators/DatasourcesEditor.json";
 import PageList from "./PageList";
 import { anvilLocators } from "./Anvil/Locators";
+import { PluginActionForm } from "./PluginActionForm";
+import ApiEditor from "../../locators/ApiEditor";
+import BottomTabs from "./IDE/BottomTabs";
 
 export const DataSourceKVP = {
   Postgres: "PostgreSQL",
@@ -37,6 +40,7 @@ export enum Widgets {
   Text,
   WDSTable,
 }
+
 type AppModes = "Edit" | "View";
 
 interface RunQueryParams {
@@ -44,6 +48,7 @@ interface RunQueryParams {
   expectedStatus?: boolean;
   waitTimeInterval?: number;
 }
+
 export class DataSources {
   private agHelper = ObjectsRegistry.AggregateHelper;
   private table = ObjectsRegistry.Table;
@@ -52,6 +57,7 @@ export class DataSources {
   private apiPage = ObjectsRegistry.ApiPage;
   private dataManager = ObjectsRegistry.DataManager;
   private assertHelper = ObjectsRegistry.AssertHelper;
+  private pluginActionForm = new PluginActionForm();
 
   public ContainerKVP = (containerName: string) => {
     return {
@@ -116,7 +122,7 @@ export class DataSources {
     "']";
   _activeDSListReconnectModal = (dbName: string) =>
     "//div[contains(@class, 't--ds-list')]//span[text()='" + dbName + "']";
-  _runQueryBtn = ".t--run-query";
+  _runQueryBtn = "[data-testid='t--run-action']";
   _newDatabases = "#new-datasources";
   _newDatasourceContainer = "#new-integrations-wrapper";
   _selectDatasourceDropdown = "[data-testid=t--datasource-dropdown]";
@@ -141,14 +147,14 @@ export class DataSources {
     option +
     "']";
   _queryTableResponse =
-    "//div[@data-guided-tour-id='query-table-response']//div[@class='tbody']//div[@class ='td']";
+    "//div[@data-guided-tour-id='query-table-response']//div[@class='tbody']//div[@class ='td as-mask']";
   _queryResponseHeader = (header: string) =>
     "//div[@data-guided-tour-id='query-table-response']//div[@class='table']//div[@role ='columnheader']//span[text()='" +
     header +
     "']";
   _refreshIcon = "button .bp3-icon-refresh";
   _addIcon = "button .bp3-icon-add";
-  _queryError = "[data-testid='t--query-error']";
+  _queryError = "[data-testid='t--response-error']";
   _queryEditorTabs = (responseType: string) =>
     "//button[@role='tab' or @role='tablist']//span[text()='" +
     responseType +
@@ -157,17 +163,17 @@ export class DataSources {
     "//div[@data-testid='t--response-tab-segmented-control']//span[text()='" +
     responseType +
     "']";
+  // TODO: remove this when response UI is ready
   _queryRecordResult = (recordCount: number) =>
     `//div/span[text()='Result:']/span[number(substring-before(normalize-space(text()), ' Record')) >= ${recordCount}]`;
   _noRecordFound = "span[data-testid='no-data-table-message']";
   _usePreparedStatement =
     "input[name='actionConfiguration.pluginSpecifiedTemplates[0].value'][type='checkbox'], input[name='actionConfiguration.formData.preparedStatement.data'][type='checkbox']";
   _mockDB = (dbName: string) =>
-    "//span[text()='" +
+    "//p[text()='" +
     dbName +
     "']/ancestor::div[contains(@class, 't--mock-datasource')][1]";
   private _createBlankGraphQL = ".t--createBlankApiGraphqlCard";
-  private _createBlankCurl = ".t--createBlankCurlCard";
   private _graphQLHeaderKey = "input[name='headers[0].key']";
   private _graphQLHeaderValue = "input[name='headers[0].value']";
   _graphqlQueryEditor = ".t--graphql-query-editor";
@@ -193,15 +199,15 @@ export class DataSources {
   _globalSearchInput = ".t--global-search-input";
   _gsScopeDropdown =
     "[data-testid^='datasourceStorages.'][data-testid$='.datasourceConfiguration.authentication.scopeString']";
-  _gsScopeOptions = ".ads-v2-select__dropdown .rc-select-item-option";
+  _gsScopeOptions = ".ads-v2-radio-group";
   _queryTimeout = "//input[@name='actionConfiguration.timeoutInMillisecond']";
   _getStructureReq = "/api/v1/datasources/*/structure?ignoreCache=true";
   _editDatasourceFromActiveTab = (dsName: string) =>
-    ".t--datasource-name:contains('" + dsName + "')";
+    ".t--plugin-name:contains('" + dsName + "')";
   _mandatoryMark = "//span[text()='*']";
   _deleteDSHostPort = ".t--delete-field";
-
-  private _pageSelectionMenu = "[data-testId='t--page-selection']";
+  _dsTabSchema = "[data-testid='t--tab-DATASOURCE_TAB']";
+  private _pageSelectionMenu = "[data-testid='t--page-selection']";
 
   private _pageSelectMenuItem = ".ads-v2-menu__menu-item";
 
@@ -212,8 +218,6 @@ export class DataSources {
     widgetType +
     "')]";
 
-  private _curlTextArea =
-    "//label[text()='Paste CURL Code Here']/parent::form/div";
   _noSchemaAvailable = (dbName: string) =>
     "//div[text()='" +
     dbName +
@@ -265,7 +269,7 @@ export class DataSources {
     "')]/ancestor::div[@class='form-config-top']/following-sibling::div//div[contains(@class, 'rc-select-multiple')]";
   private _datasourceSchemaRefreshBtn = ".datasourceStructure-refresh";
   private _datasourceStructureHeader = ".datasourceStructure-header";
-  _datasourceSchemaColumn = ".t--datasource-column";
+  _datasourceSchemaColumn = ".t--datasource-column .t--field-name";
   _datasourceStructureSearchInput = ".datasourceStructure-search input";
   _jsModeSortingControl = ".t--actionConfiguration\\.formData\\.sortBy\\.data";
   public _queryEditorCollapsibleIcon = ".collapsible-icon";
@@ -296,7 +300,7 @@ export class DataSources {
   _imgFireStoreLogo = "//img[contains(@src, 'firestore.svg')]";
   _dsVirtuosoElement = `div .t--schema-virtuoso-container`;
   private _dsVirtuosoList = `[data-test-id="virtuoso-item-list"]`;
-  private _dsSchemaContainer = `[data-testId="datasource-schema-container"]`;
+  private _dsSchemaContainer = `[data-testid="t--datasource-schema-container"]`;
   private _dsVirtuosoElementTable = (targetTableName: string) =>
     `${this._dsSchemaEntityItem}[data-testid='t--entity-item-${targetTableName}']`;
   private _dsPageTabListItem = (buttonText: string) =>
@@ -326,9 +330,7 @@ export class DataSources {
       datasourceName,
     );
     this.agHelper.GetNClick(this._selectTableDropdown, 0, true);
-    cy.get(
-      `div[role="listbox"] p[kind="span"]:contains("${tableName}")`,
-    ).click();
+    cy.get(`div[role="listbox"] p:contains("${tableName}")`).click();
     this.agHelper.GetNClick(this._generatePageBtn);
     this.assertHelper.AssertNetworkStatus("@replaceLayoutWithCRUDPage", 201);
     this.agHelper.ClickButton("Got it");
@@ -681,19 +683,6 @@ export class DataSources {
     );
   }
 
-  public FillCurlNImport(value: string) {
-    this.NavigateToDSCreateNew();
-    this.agHelper.GetNClick(this._createBlankCurl);
-    this.ImportCurlNRun(value);
-  }
-
-  public ImportCurlNRun(value: string) {
-    this.agHelper.UpdateTextArea(this._curlTextArea, value);
-    this.agHelper.Sleep(500); //Clicking import after value settled
-    this.agHelper.ClickButton("Import");
-    this.apiPage.RunAPI();
-  }
-
   public FillFirestoreDSForm(environment = this.dataManager.defaultEnviorment) {
     this.agHelper.TypeText(
       this.locator._inputFieldByName("Database URL") +
@@ -740,22 +729,28 @@ export class DataSources {
     environment = this.dataManager.defaultEnviorment,
     enterOrSelectUrl: "enter" | "select" = "enter",
     dsNameToSelect = "",
+    renameCallback?: (queryName: string) => void,
   ) {
     this.agHelper.GetNClick(this._createBlankGraphQL);
     cy.get("@guid").then((uid) => {
-      this.agHelper.RenameWithInPane("GraphQL_API" + "_" + uid, true);
+      const queryName = "GraphQL_API" + "_" + uid;
+      if (typeof renameCallback === "function") {
+        renameCallback(queryName);
+      } else {
+        this.agHelper.RenameQuery(queryName);
+      }
 
       if (enterOrSelectUrl == "enter")
         this.apiPage.EnterURL(
           this.dataManager.dsValues[environment].GraphqlApiUrl_TED,
         );
       else if (enterOrSelectUrl == "select") {
-        this.agHelper.GetNClick(this.apiPage._resourceUrl);
+        this.agHelper.GetNClick(ApiEditor.dataSourceField);
         this.agHelper.GetNClick(this._graphQlDsHintOption(dsNameToSelect));
       }
 
       this.assertHelper.AssertNetworkStatus("@createNewApi", 201);
-      cy.wrap("GraphQL_API" + "_" + uid).as("dsName");
+      cy.wrap(queryName).as("dsName");
     });
   }
 
@@ -780,7 +775,7 @@ export class DataSources {
     this.agHelper.ClearNType(this._graphQLHeaderValue, hValue);
     cy.get("@guid").then((uid: any) => {
       dataSourceName = dataSourceName + " " + uid;
-      this.agHelper.RenameWithInPane(dataSourceName, false);
+      this.agHelper.RenameDatasource(dataSourceName);
       this.SaveDatasource();
       cy.wrap(dataSourceName).as("dsName");
     });
@@ -898,7 +893,7 @@ export class DataSources {
         this.agHelper.AssertContains(
           responseStatus === 200
             ? "datasource deleted successfully"
-            : "action(s) using it",
+            : "Cannot delete datasource",
         );
       });
   }
@@ -922,7 +917,7 @@ export class DataSources {
     });
     //this.assertHelper.AssertNetworkStatus("@createNewApi", 201);
     this.AssertRunButtonVisibility();
-    if (queryName) this.agHelper.RenameWithInPane(queryName);
+    if (queryName) this.agHelper.RenameQuery(queryName);
     if (query) {
       this.EnterQuery(query);
       this.AssertRunButtonDisability(false);
@@ -1015,6 +1010,7 @@ export class DataSources {
     this.assertHelper.AssertNetworkStatus("@getConsolidatedData", 200);
     this.assertHelper.AssertNetworkStatus("getWorkspace");
   }
+
   public ReconnectModalValidation(
     dbName: string,
     dsName: "PostgreSQL" | "MySQL" | "MongoDB",
@@ -1129,11 +1125,8 @@ export class DataSources {
       });
   }
 
-  ToggleUsePreparedStatement(
-    enable = true || false,
-    toNavigateToSettings = false,
-  ) {
-    toNavigateToSettings && this.apiPage.SelectPaneTab("Settings");
+  ToggleUsePreparedStatement(enable = true || false) {
+    this.pluginActionForm.toolbar.toggleSettings();
     if (enable) this.agHelper.CheckUncheck(this._usePreparedStatement, true);
     else this.agHelper.CheckUncheck(this._usePreparedStatement, false);
   }
@@ -1149,22 +1142,33 @@ export class DataSources {
     this.assertHelper.AssertNetworkStatus("@saveAction", 200);
   }
 
-  public RunQueryNVerifyResponseViews(
-    expectedRecordsCount = 1,
-    tableCheck = true,
-  ) {
+  public runQueryAndVerifyResponseViews({
+    count = 1,
+    operator = "eq",
+    responseTypes = ["TABLE", "JSON", "RAW"],
+  }: {
+    count?: number;
+    operator?: Parameters<
+      typeof BottomTabs.response.validateRecordCount
+    >[0]["operator"];
+    responseTypes?: ("TABLE" | "JSON" | "RAW")[];
+  } = {}) {
     this.RunQuery();
-    tableCheck &&
-      this.agHelper.AssertElementVisibility(this._queryResponse("TABLE"));
-    this.agHelper.AssertElementVisibility(this._queryResponse("JSON"));
-    this.agHelper.AssertElementVisibility(this._queryResponse("RAW"));
-    this.CheckResponseRecordsCount(expectedRecordsCount);
-  }
 
-  public CheckResponseRecordsCount(expectedRecordCount: number) {
-    this.agHelper.AssertElementVisibility(
-      this._queryRecordResult(expectedRecordCount),
-    );
+    BottomTabs.response.openResponseTypeMenu();
+
+    responseTypes.forEach((responseType) => {
+      this.agHelper.AssertElementVisibility(
+        BottomTabs.response.locators.responseTypeMenuItem(responseType),
+      );
+    });
+
+    BottomTabs.response.closeResponseTypeMenu();
+
+    BottomTabs.response.validateRecordCount({
+      count,
+      operator,
+    });
   }
 
   public CreateDataSource(
@@ -1200,7 +1204,7 @@ export class DataSources {
         this.CreatePlugIn(DataSourceKVP[dsType]);
         guid = uid;
         dataSourceName = dsType + " " + guid;
-        this.agHelper.RenameWithInPane(dataSourceName, false);
+        this.agHelper.RenameDatasource(dataSourceName);
         // Execute the preDSConfigAction if it is defined
         if (!!preDSConfigAction) {
           preDSConfigAction.bind(this)(environment);
@@ -1258,7 +1262,7 @@ export class DataSources {
     if (query) {
       this.EnterQuery(query, sleep);
     }
-    if (queryName) this.agHelper.RenameWithInPane(queryName);
+    if (queryName) this.agHelper.RenameQuery(queryName);
   }
 
   public UpdateGraphqlQueryAndVariable(options?: {
@@ -1329,15 +1333,14 @@ export class DataSources {
     queryTimeout = 20000,
     action: "QUERY" | "API" = "QUERY",
   ) {
-    this.agHelper.GetNClick(this._queryEditorTabs("Settings"));
+    // open the settings
+    this.pluginActionForm.toolbar.toggleSettings();
     cy.xpath(this._queryTimeout)
       .clear()
       .type(queryTimeout.toString(), { delay: 0 }); //Delay 0 to work like paste!
     this.agHelper.AssertAutoSave();
-
-    if (action === "QUERY") {
-      this.agHelper.GetNClick(this._queryEditorTabs("Query"));
-    }
+    // close the settings
+    this.pluginActionForm.toolbar.toggleSettings();
   }
 
   //Update with new password in the datasource conf page
@@ -1386,7 +1389,7 @@ export class DataSources {
     expectedTableName = search,
   ) {
     this.agHelper.Sleep(2500); //for query editor to load
-    this.agHelper.TypeText(this._datasourceStructureSearchInput, search);
+    this.agHelper.ClearNType(this._datasourceStructureSearchInput, search);
     this.agHelper.Sleep(1000); //for search result to load
     this.VerifyTableSchemaOnQueryEditor(expectedTableName);
   }
@@ -1590,7 +1593,7 @@ export class DataSources {
     clientSecret: string,
     environment = this.dataManager.defaultEnviorment,
   ) {
-    if (dsName) this.agHelper.RenameWithInPane(dsName, false);
+    if (dsName) this.agHelper.RenameDatasource(dsName);
     // Fill Auth Form
     this.agHelper.TypeText(
       this.locator._inputFieldByName("URL") + "//" + this.locator._inputField,
@@ -1869,7 +1872,9 @@ export class DataSources {
     cy.intercept("GET", "/api/v1/datasources/*/structure?ignoreCache=*").as(
       `getDatasourceStructureUpdated_${ds_entity_name}`,
     );
-    cy.get("[data-testid=t--tab-schema]").first().click({ force: true });
+    cy.get("[data-testid=t--tab-DATASOURCE_TAB]")
+      .first()
+      .click({ force: true });
     this.RefreshDatasourceSchema();
     this.assertHelper
       .WaitForNetworkCall(`@getDatasourceStructureUpdated_${ds_entity_name}`)

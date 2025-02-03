@@ -12,10 +12,13 @@ import {
 
 describe(
   "Verify various Table_Filter combinations",
-  { tags: ["@tag.Widget", "@tag.Table"] },
+  { tags: ["@tag.Widget", "@tag.Table", "@tag.Binding"] },
   function () {
     it("1. Verify Full table data - download csv and download Excel", function () {
       entityExplorer.DragDropWidgetNVerify("tablewidgetv2", 650, 250);
+      // turn on filtering for the table - it is disabled by default in this PR(#34593)
+      propPane.ExpandIfCollapsedSection("search\\&filters");
+      agHelper.GetNClick(".t--property-control-allowfiltering input");
       table.AddSampleTableData();
       propPane.UpdatePropertyFieldValue(
         "Table data",
@@ -89,7 +92,7 @@ describe(
       deployMode.NavigateBacktoEditor();
       table.WaitUntilTableLoad(0, 0, "v2");
       homePage.NavigateToHome();
-      homePage.ImportApp("Table/TableFilterImportApp.json");
+      homePage.ImportApp("Table/TableV2FilterImportApp.json");
       homePage.AssertImportToast();
       deployMode.DeployApp(locators._widgetInDeployed(draggableWidgets.TABLE));
       table.WaitUntilTableLoad(0, 0, "v2");

@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { EDITOR_PANE_TEXTS, createMessage } from "@appsmith/constants/messages";
+import { EDITOR_PANE_TEXTS, createMessage } from "ee/constants/messages";
 import { getPagePermissions } from "selectors/editorSelectors";
 import { useFeatureFlag } from "utils/hooks/useFeatureFlag";
-import { getHasCreateActionPermission } from "@appsmith/utils/BusinessFeatures/permissionPageHelpers";
-import { FEATURE_FLAG } from "@appsmith/entities/FeatureFlag";
-import { useJSAdd } from "@appsmith/pages/Editor/IDE/EditorPane/JS/hooks";
-import { EmptyState } from "../components/EmptyState";
+import { getHasCreateActionPermission } from "ee/utils/BusinessFeatures/permissionPageHelpers";
+import { FEATURE_FLAG } from "ee/entities/FeatureFlag";
+import { useJSAdd } from "ee/pages/Editor/IDE/EditorPane/JS/hooks";
+import { EmptyState } from "@appsmith/ads";
 
 const BlankState: React.FC = () => {
   const pagePermissions = useSelector(getPagePermissions);
@@ -18,13 +18,21 @@ const BlankState: React.FC = () => {
   );
   const { openAddJS } = useJSAdd();
 
+  const buttonProps = useMemo(
+    () => ({
+      className: "t--add-item",
+      testId: "t--add-item",
+      text: createMessage(EDITOR_PANE_TEXTS.js_add_button),
+      onClick: canCreateActions ? openAddJS : undefined,
+    }),
+    [canCreateActions, openAddJS],
+  );
+
   return (
     <EmptyState
-      buttonClassName="t--add-item"
-      buttonText={createMessage(EDITOR_PANE_TEXTS.js_add_button)}
+      button={buttonProps}
       description={createMessage(EDITOR_PANE_TEXTS.js_blank_state_description)}
       icon={"js-square-v3"}
-      onClick={canCreateActions ? openAddJS : undefined}
     />
   );
 };

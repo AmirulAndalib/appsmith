@@ -3,15 +3,21 @@ import { hookWrapper } from "test/testUtils";
 import { getIDETestState } from "test/factories/AppIDEFactoryUtils";
 import { PageFactory } from "test/factories/PageFactory";
 import { useGetPageFocusUrl } from "./hooks";
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { createEditorFocusInfo } from "../../../ce/navigation/FocusStrategy/AppIDEFocusStrategy";
+import { createPageFocusInfo } from "ee/navigation/FocusStrategy/AppIDEFocusStrategy";
+
+const mockUseGitCurrentBranch = jest.fn<string | null, []>(() => null);
+
+jest.mock("../gitSync/hooks/modHooks", () => ({
+  useGitCurrentBranch: () => mockUseGitCurrentBranch(),
+}));
 
 describe("useGetPageFocusUrl", () => {
   const pages = PageFactory.buildList(4);
+
   pages[0].isDefault = true;
-  const page1FocusHistory = createEditorFocusInfo(pages[0].pageId);
-  const page2FocusHistory = createEditorFocusInfo(pages[1].pageId);
-  const page3FocusHistory = createEditorFocusInfo(pages[2].pageId);
+  const page1FocusHistory = createPageFocusInfo(pages[0].pageId, null);
+  const page2FocusHistory = createPageFocusInfo(pages[1].pageId, null);
+  const page3FocusHistory = createPageFocusInfo(pages[2].pageId, null);
 
   const focusHistory = {
     [page1FocusHistory.key]: {
@@ -39,10 +45,13 @@ describe("useGetPageFocusUrl", () => {
     focusHistory,
   });
   const wrapper = hookWrapper({ initialState: state });
+
   it("works for JS focus history", () => {
+    mockUseGitCurrentBranch.mockReturnValue(null);
     const { result } = renderHook(() => useGetPageFocusUrl(pages[0].pageId), {
       wrapper,
     });
+
     expect(result.current).toEqual(
       `/app/application/page-${pages[0].pageId}/edit/jsObjects/js_id`,
     );
@@ -52,6 +61,7 @@ describe("useGetPageFocusUrl", () => {
     const { result } = renderHook(() => useGetPageFocusUrl(pages[1].pageId), {
       wrapper,
     });
+
     expect(result.current).toEqual(
       `/app/application/page-${pages[1].pageId}/edit/widgets/widgetId`,
     );
@@ -61,6 +71,7 @@ describe("useGetPageFocusUrl", () => {
     const { result } = renderHook(() => useGetPageFocusUrl(pages[2].pageId), {
       wrapper,
     });
+
     expect(result.current).toEqual(
       `/app/application/page-${pages[2].pageId}/edit/queries/query_id`,
     );
@@ -70,6 +81,7 @@ describe("useGetPageFocusUrl", () => {
     const { result } = renderHook(() => useGetPageFocusUrl(pages[3].pageId), {
       wrapper,
     });
+
     expect(result.current).toEqual(
       `/app/application/page-${pages[3].pageId}/edit`,
     );
@@ -77,10 +89,13 @@ describe("useGetPageFocusUrl", () => {
 
   it("returns correct state when branches exist", () => {
     const branch = "featureBranch";
-    const page1FocusHistoryWithBranch = createEditorFocusInfo(
+
+    mockUseGitCurrentBranch.mockReturnValue(branch);
+    const page1FocusHistoryWithBranch = createPageFocusInfo(
       pages[0].pageId,
       branch,
     );
+
     const state = getIDETestState({
       pages,
       focusHistory: {

@@ -3,6 +3,7 @@ import log from "loglevel";
 import memoizeOne from "memoize-one";
 
 import _, {
+  cloneDeep,
   filter,
   isArray,
   isEmpty,
@@ -58,6 +59,7 @@ import {
   DEFAULT_MENU_VARIANT,
   defaultEditableCell,
   EditableCellActions,
+  HTML_COLUMN_TYPE_ENABLED,
   InlineEditingSaveOptions,
   ORIGINAL_INDEX_KEY,
   PaginationDirection,
@@ -101,7 +103,6 @@ import { ImageCell } from "../component/cellComponents/ImageCell";
 import { VideoCell } from "../component/cellComponents/VideoCell";
 import { IconButtonCell } from "../component/cellComponents/IconButtonCell";
 import { EditActionCell } from "../component/cellComponents/EditActionsCell";
-import { klona as clone } from "klona";
 import { CheckboxCell } from "../component/cellComponents/CheckboxCell";
 import { SwitchCell } from "../component/cellComponents/SwitchCell";
 import { SelectCell } from "../component/cellComponents/SelectCell";
@@ -139,12 +140,15 @@ import {
 } from "layoutSystems/common/utils/constants";
 import IconSVG from "../icon.svg";
 import ThumbnailSVG from "../thumbnail.svg";
-import { FEATURE_FLAG } from "@appsmith/entities/FeatureFlag";
+import { klonaRegularWithTelemetry } from "utils/helpers";
+import HTMLCell from "../component/cellComponents/HTMLCell";
 
 const ReactTableComponent = lazy(async () =>
   retryPromise(async () => import("../component")),
 );
 
+// TODO: Fix this the next time the file is edited
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const emptyArr: any = [];
 
 type addNewRowToTable = (
@@ -158,12 +162,15 @@ const getMemoisedAddNewRow = (): addNewRowToTable =>
     if (isAddRowInProgress) {
       return [newRowContent, ...tableData];
     }
+
     return tableData;
   });
 
 class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
   inlineEditTimer: number | null = null;
   memoisedAddNewRow: addNewRowToTable;
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   memoiseGetColumnsWithLocalStorage: (localStorage: any) => getColumns;
   memoiseTransformDataWithEditableCell: transformDataWithEditableCell;
 
@@ -210,7 +217,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       columnOrder: [],
       enableClientSideSearch: true,
       isVisibleSearch: true,
-      isVisibleFilters: true,
+      isVisibleFilters: false,
       isVisibleDownload: true,
       isVisiblePagination: true,
       isSortable: true,
@@ -222,6 +229,8 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       )
         ? false
         : undefined,
+      customIsLoading: false,
+      customIsLoadingValue: "",
     };
   }
 
@@ -270,12 +279,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
             isVisibleDownload: false,
           });
 
-          if (
-            !!TableWidgetV2.getFeatureFlag(
-              FEATURE_FLAG.rollout_js_enabled_one_click_binding_enabled,
-            )
-          )
-            dynamicPropertyPathList.push({ key: "tableData" });
+          dynamicPropertyPathList.push({ key: "tableData" });
         }
 
         if (queryConfig.create) {
@@ -412,6 +416,8 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       getMemoiseTransformDataWithEditableCell();
   }
 
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static getMetaPropertiesMap(): Record<string, any> {
     return {
       pageNo: 1,
@@ -582,6 +588,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     const widgetLocalStorageState = getColumnOrderByWidgetIdFromLS(widgetId);
     const memoisdGetColumnsWithLocalStorage =
       this.memoiseGetColumnsWithLocalStorage(widgetLocalStorageState);
+
     return memoisdGetColumnsWithLocalStorage(
       this.renderCell,
       columnWidthMap,
@@ -737,6 +744,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         ) {
           // Maintain original columnOrder and keep new columns at the end
           let newColumnOrder = _.intersection(columnOrder, newColumnIds);
+
           newColumnOrder = _.union(newColumnOrder, newColumnIds);
 
           const compareColumns = (a: string, b: string) => {
@@ -774,6 +782,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
             const rightOrder = newColumnOrder.filter(
               (col: string) => tableColumns[col].sticky === StickyType.RIGHT,
             );
+
             this.persistColumnOrder(newColumnOrder, leftOrder, rightOrder);
           }
         }
@@ -876,6 +885,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         const propertiesToUpdate = {
           modify: propertiesToAdd,
         };
+
         super.batchUpdateWidgetProperty(propertiesToUpdate);
       }
     } else {
@@ -903,6 +913,36 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     if (canFreezeColumn && renderMode === RenderModes.PAGE) {
       //dont neet to batch this since single action
       this.hydrateStickyColumns();
+    }
+
+    /**
+     * Why we are doing this?
+     * This is a safety net! Consider this scenario:
+     * 1. HTML column type is enabled.
+     * 2. User creates a table with HTML columns.
+     * 3. HTML column type is disabled. (For any reason)
+     *
+     * In this scenario, we don't want incomplete experience for the user.
+     * Without this safety net, the property pane will not show the HTML as type and the `ColumnType` will be lost(and empty), which is confusing for the user.
+     * With this safety net, we will update the column type to TEXT.
+     * @rahulbarwal Remove this once we remove the feature flag
+     */
+    if (!TableWidgetV2.getFeatureFlag(HTML_COLUMN_TYPE_ENABLED)) {
+      const updatedPrimaryColumns = cloneDeep(this.props.primaryColumns);
+      let hasHTMLColumns = false;
+
+      Object.values(updatedPrimaryColumns).forEach(
+        (column: ColumnProperties) => {
+          if (column.columnType === ColumnTypes.HTML) {
+            column.columnType = ColumnTypes.TEXT;
+            hasHTMLColumns = true;
+          }
+        },
+      );
+
+      if (hasHTMLColumns) {
+        this.updateWidgetProperty("primaryColumns", updatedPrimaryColumns);
+      }
     }
   }
 
@@ -947,6 +987,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     const isTableDataModified = this.props.tableData !== prevProps.tableData;
 
     const { commitBatchMetaUpdates, pushBatchMetaUpdates } = this.props;
+
     // If the user has changed the tableData OR
     // The binding has returned a new value
     if (isTableDataModified) {
@@ -1123,6 +1164,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         selectedRowIndices,
         primaryColumnId,
       );
+
       pushBatchMetaUpdates("selectedRowIndices", indices);
     } else {
       const index = getSelectRowIndex(
@@ -1132,6 +1174,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         selectedRowIndex,
         primaryColumnId,
       );
+
       pushBatchMetaUpdates("selectedRowIndex", index);
     }
   };
@@ -1183,6 +1226,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       pushBatchMetaUpdates("pageNo", 1);
       this.updatePaginationDirectionFlags(PaginationDirection.INITIAL);
     }
+
     commitBatchMetaUpdates();
   };
 
@@ -1193,13 +1237,17 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
   getPaddingAdjustedDimensions = () => {
     // eslint-disable-next-line prefer-const
     let { componentHeight, componentWidth } = this.props;
+
     // (2 * WIDGET_PADDING) gives the total horizontal padding (i.e. paddingLeft + paddingRight)
     componentWidth = componentWidth - 2 * WIDGET_PADDING;
+
     return { componentHeight, componentWidth };
   };
 
   getWidgetView() {
     const {
+      customIsLoading,
+      customIsLoadingValue,
       delimiter,
       filteredTableData = [],
       isVisibleDownload,
@@ -1255,7 +1303,11 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           height={componentHeight}
           isAddRowInProgress={this.props.isAddRowInProgress}
           isEditableCellsValid={this.props.isEditableCellsValid}
-          isLoading={this.props.isLoading}
+          isLoading={
+            customIsLoading
+              ? customIsLoadingValue || this.props.isLoading
+              : this.props.isLoading
+          }
           isSortable={this.props.isSortable ?? true}
           isVisibleDownload={isVisibleDownload}
           isVisibleFilters={isVisibleFilters}
@@ -1367,8 +1419,10 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           rightOrder,
         },
       };
+
       newTableColumnOrder = tableWidgetColumnOrder;
     }
+
     localStorage.setItem(
       TABLE_COLUMN_ORDER_KEY,
       JSON.stringify(newTableColumnOrder),
@@ -1381,6 +1435,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       const localTableColumnOrder = getColumnOrderByWidgetIdFromLS(
         this.props.widgetId,
       );
+
       if (this.props.renderMode === RenderModes.CANVAS) {
         newColumnOrder = generateNewColumnOrderFromStickyValue(
           this.props.primaryColumns,
@@ -1404,6 +1459,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         this.props.renderMode === RenderModes.PAGE
       ) {
         const { leftOrder, rightOrder } = localTableColumnOrder;
+
         newColumnOrder = generateLocalNewColumnOrderFromStickyValue(
           localTableColumnOrder.columnOrder,
           columnName,
@@ -1417,6 +1473,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           rightOrder,
           sticky,
         );
+
         this.persistColumnOrder(
           newColumnOrder,
           updatedOrders.leftOrder,
@@ -1446,8 +1503,10 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       const localTableColumnOrder = getColumnOrderByWidgetIdFromLS(
         this.props.widgetId,
       );
+
       if (localTableColumnOrder) {
         const { leftOrder, rightOrder } = localTableColumnOrder;
+
         this.persistColumnOrder(columnOrder, leftOrder, rightOrder);
       } else {
         this.persistColumnOrder(columnOrder, [], []);
@@ -1496,6 +1555,8 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     }
   };
 
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleSearchTable = (searchKey: any) => {
     const {
       commitBatchMetaUpdates,
@@ -1543,6 +1604,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     const { filteredTableData = [], pushBatchMetaUpdates } = this.props;
 
     const currentRow = row || filteredTableData[rowIndex];
+
     pushBatchMetaUpdates(
       "triggeredRowIndex",
       currentRow?.[ORIGINAL_INDEX_KEY],
@@ -1601,6 +1663,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       const selectedRowIndices = pageData.map(
         (row: Record<string, unknown>) => row.index,
       );
+
       //single action no need to batch
       this.props.updateWidgetMetaProperty(
         "selectedRowIndices",
@@ -1673,6 +1736,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       event == EventType.ON_NEXT_PAGE
         ? PaginationDirection.NEXT_PAGE
         : PaginationDirection.PREVIOUS_PAGE;
+
     this.updatePaginationDirectionFlags(paginationDirection);
 
     if (event) {
@@ -1690,6 +1754,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     if (this.props.onPageChange) {
       this.pushResetSelectedRowIndexUpdates();
     }
+
     commitBatchMetaUpdates();
   };
 
@@ -1738,6 +1803,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     if (this.props.onPageChange) {
       this.pushResetSelectedRowIndexUpdates();
     }
+
     commitBatchMetaUpdates();
   };
 
@@ -1785,6 +1851,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         this.pushResetSelectedRowIndexUpdates();
       }
     }
+
     commitBatchMetaUpdates();
   };
 
@@ -1826,7 +1893,10 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
   };
 
   removeRowFromTransientTableData = (index: number) => {
-    const newTransientTableData = clone(this.props.transientTableData);
+    const newTransientTableData = klonaRegularWithTelemetry(
+      this.props.transientTableData,
+      "TableWidgetV2.removeRowFromTransientTableData",
+    );
     const { commitBatchMetaUpdates, pushBatchMetaUpdates } = this.props;
 
     if (newTransientTableData) {
@@ -1834,6 +1904,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
 
       pushBatchMetaUpdates("transientTableData", newTransientTableData);
     }
+
     pushBatchMetaUpdates("updatedRowIndex", -1);
     commitBatchMetaUpdates();
   };
@@ -1880,6 +1951,8 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     );
   };
 
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderCell = (props: any) => {
     const column =
       this.getColumnByOriginalId(
@@ -2118,6 +2191,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
             isCellEditable={isCellEditable}
             isCellVisible={cellProperties.isCellVisible ?? true}
             isEditable={isColumnEditable}
+            isEditableCellValid={this.isColumnCellValid(alias)}
             isFilterable={cellProperties.isFilterable}
             isHidden={isHidden}
             isNewRow={isNewRow}
@@ -2476,6 +2550,25 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           />
         );
 
+      case ColumnTypes.HTML:
+        return (
+          <HTMLCell
+            allowCellWrapping={cellProperties.allowCellWrapping}
+            cellBackground={cellProperties.cellBackground}
+            compactMode={compactMode}
+            fontStyle={cellProperties.fontStyle}
+            horizontalAlignment={cellProperties.horizontalAlignment}
+            isCellDisabled={cellProperties.isCellDisabled}
+            isCellVisible={cellProperties.isCellVisible ?? true}
+            isHidden={isHidden}
+            renderMode={this.props.renderMode}
+            textColor={cellProperties.textColor}
+            textSize={cellProperties.textSize}
+            value={props.cell.value}
+            verticalAlignment={cellProperties.verticalAlignment}
+          />
+        );
+
       default:
         let validationErrorMessage;
 
@@ -2552,6 +2645,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           [this.props.editableCell?.column]: value,
         });
       }
+
       commitBatchMetaUpdates();
     }
   };
@@ -2572,6 +2666,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
       if (this.inlineEditTimer) {
         clearTimeout(this.inlineEditTimer);
       }
+
       const { commitBatchMetaUpdates, pushBatchMetaUpdates } = this.props;
 
       pushBatchMetaUpdates("editableCell", {
@@ -2581,6 +2676,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         // To revert back to previous on discard
         initialValue: value,
         inputValue: value,
+        __originalIndex__: this.getRowOriginalIndex(rowIndex),
       });
       pushBatchMetaUpdates("columnEditableCellValue", {
         ...this.props.columnEditableCellValue,
@@ -2599,6 +2695,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           pushBatchMetaUpdates("selectedRowIndex", -1);
         }
       }
+
       commitBatchMetaUpdates();
     } else {
       if (
@@ -2626,6 +2723,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
             },
           });
         }
+
         commitBatchMetaUpdates();
 
         this.clearEditableCell();
@@ -2644,31 +2742,29 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
     value: string,
     onSubmit?: string,
   ) => {
-    if (this.isColumnCellValid(alias)) {
-      const { commitBatchMetaUpdates } = this.props;
+    const { commitBatchMetaUpdates } = this.props;
 
-      this.pushTransientTableDataActionsUpdates({
-        [ORIGINAL_INDEX_KEY]: this.getRowOriginalIndex(rowIndex),
-        [alias]: value,
+    this.pushTransientTableDataActionsUpdates({
+      [ORIGINAL_INDEX_KEY]: this.getRowOriginalIndex(rowIndex),
+      [alias]: value,
+    });
+
+    if (onSubmit && this.props.editableCell?.column) {
+      //since onSubmit is truthy this makes action truthy as well, so we can push this event
+      this.pushOnColumnEvent({
+        rowIndex: rowIndex,
+        action: onSubmit,
+        triggerPropertyName: "onSubmit",
+        eventType: EventType.ON_SUBMIT,
+        row: {
+          ...this.props.filteredTableData[rowIndex],
+          [this.props.editableCell.column]: value,
+        },
       });
-
-      if (onSubmit && this.props.editableCell?.column) {
-        //since onSubmit is truthy this makes action truthy as well, so we can push this event
-        this.pushOnColumnEvent({
-          rowIndex: rowIndex,
-          action: onSubmit,
-          triggerPropertyName: "onSubmit",
-          eventType: EventType.ON_SUBMIT,
-          row: {
-            ...this.props.filteredTableData[rowIndex],
-            [this.props.editableCell.column]: value,
-          },
-        });
-      }
-
-      commitBatchMetaUpdates();
-      this.clearEditableCell();
     }
+
+    commitBatchMetaUpdates();
+    this.clearEditableCell();
   };
   pushClearEditableCellsUpdates = () => {
     const { pushBatchMetaUpdates } = this.props;
@@ -2733,6 +2829,7 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
           },
         });
       }
+
       commitBatchMetaUpdates();
     }
   };
@@ -2766,10 +2863,13 @@ class TableWidgetV2 extends BaseWidget<TableWidgetProps, WidgetState> {
         },
       });
     }
+
     commitBatchMetaUpdates();
   };
 
   onCheckChange = (
+    // TODO: Fix this the next time the file is edited
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     column: any,
     row: Record<string, unknown>,
     value: boolean,

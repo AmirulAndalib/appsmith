@@ -837,7 +837,7 @@ Cypress.Commands.add("selectWidgetForReset", (value) => {
 });
 
 Cypress.Commands.add("SetDateToToday", () => {
-  cy.get(".react-datepicker .react-datepicker__day--today").click({
+  cy.get("button:contains('Today')").click({
     force: true,
   });
   agHelper.AssertAutoSave();
@@ -1397,12 +1397,6 @@ Cypress.Commands.add("editTableSelectCell", (x, y) => {
   cy.get(`[data-colindex="${x}"][data-rowindex="${y}"] .select-button`).should(
     "exist",
   );
-});
-
-Cypress.Commands.add("makeColumnEditable", (column) => {
-  cy.get(
-    `[data-rbd-draggable-id="${column}"] .t--card-checkbox input+span`,
-  ).click();
 });
 
 Cypress.Commands.add("enterTableCellValue", (x, y, text) => {

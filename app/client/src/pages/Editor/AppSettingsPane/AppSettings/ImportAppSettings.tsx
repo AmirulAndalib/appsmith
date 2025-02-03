@@ -1,15 +1,15 @@
 import {
   UPDATE_VIA_IMPORT_SETTING,
   createMessage,
-} from "@appsmith/constants/messages";
-import { getCurrentAppWorkspace } from "@appsmith/selectors/selectedWorkspaceSelectors";
-import { Text, Button } from "design-system";
+} from "ee/constants/messages";
+import { getCurrentAppWorkspace } from "ee/selectors/selectedWorkspaceSelectors";
+import { Text, Button } from "@appsmith/ads";
 import ImportModal from "pages/common/ImportModal";
 import React from "react";
 import { useSelector } from "react-redux";
 import { getCurrentApplicationId } from "selectors/editorSelectors";
-import { getIsGitConnected } from "selectors/gitSyncSelectors";
 import styled from "styled-components";
+import { useGitConnected } from "pages/Editor/gitSync/hooks/modHooks";
 
 const SettingWrapper = styled.div`
   display: flex;
@@ -21,12 +21,13 @@ const SettingWrapper = styled.div`
 export function ImportAppSettings() {
   const appId = useSelector(getCurrentApplicationId);
   const workspace = useSelector(getCurrentAppWorkspace);
-  const isGitConnected = useSelector(getIsGitConnected);
+  const isGitConnected = useGitConnected();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   function handleClose() {
     setIsModalOpen(false);
   }
+
   return (
     <>
       <SettingWrapper>

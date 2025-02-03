@@ -1,7 +1,7 @@
 import {
   createMessage,
   TABLE_WIDGET_TOTAL_RECORD_TOOLTIP,
-} from "@appsmith/constants/messages";
+} from "ee/constants/messages";
 import type { PropertyPaneConfig } from "constants/PropertyControlConstants";
 import { ValidationTypes } from "constants/WidgetValidation";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
@@ -494,12 +494,33 @@ export default [
         propertyName: "animateLoading",
         label: "Animate loading",
         controlType: "SWITCH",
-        helpText: "Controls the loading of the widget",
+        helpText: "Controls the animation loading of the widget",
         defaultValue: true,
         isJSConvertible: true,
         isBindProperty: true,
         isTriggerProperty: false,
         validation: { type: ValidationTypes.BOOLEAN },
+      },
+      {
+        propertyName: "customIsLoading",
+        label: `Custom loading state`,
+        controlType: "SWITCH",
+        helpText: "Defines a custom value for the loading state",
+        defaultValue: false,
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      },
+      {
+        propertyName: "customIsLoadingValue",
+        label: "isLoading value",
+        controlType: "INPUT_TEXT",
+        defaultValue: "",
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+        hidden: (props: TableWidgetProps) => !props.customIsLoading,
+        dependencies: ["customIsLoading"],
       },
       {
         propertyName: "isVisibleDownload",

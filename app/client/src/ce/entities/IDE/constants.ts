@@ -5,7 +5,6 @@ import {
   BUILDER_CUSTOM_PATH,
   BUILDER_PATH,
   BUILDER_PATH_DEPRECATED,
-  CURL_IMPORT_PAGE_PATH,
   DATA_SOURCES_EDITOR_ID_PATH,
   ENTITY_PATH,
   INTEGRATION_EDITOR_PATH,
@@ -14,18 +13,15 @@ import {
   QUERIES_EDITOR_ID_ADD_PATH,
   QUERIES_EDITOR_ID_PATH,
   WIDGETS_EDITOR_ID_PATH,
-} from "@appsmith/constants/routes/appRoutes";
+} from "ee/constants/routes/appRoutes";
 import {
   SAAS_EDITOR_API_ID_ADD_PATH,
   SAAS_EDITOR_API_ID_PATH,
   SAAS_EDITOR_DATASOURCE_ID_PATH,
 } from "pages/Editor/SaaSEditor/constants";
-import type { PluginType } from "entities/Action";
-import type { ReactNode, ComponentType } from "react";
-import {
-  EMPTY_DATASOURCE_TOOLTIP_SIDEBUTTON,
-  createMessage,
-} from "@appsmith/constants/messages";
+import type { PluginType } from "entities/Plugin";
+import type { ComponentType, ReactNode } from "react";
+import type { IDESidebarButton } from "@appsmith/ads";
 
 export enum EditorState {
   DATA = "DATA",
@@ -35,11 +31,11 @@ export enum EditorState {
 }
 
 export const SidebarTopButtonTitles = {
-  DATA: "Data",
   EDITOR: "Editor",
 };
 
 export const SidebarBottomButtonTitles = {
+  DATA: "Datasources",
   SETTINGS: "Settings",
   LIBRARIES: "Libraries",
 };
@@ -61,47 +57,36 @@ export enum EditorViewMode {
   SplitScreen = "SplitScreen",
 }
 
-export enum SideButtonType {
-  DATSOURCE = "DATASOURCE",
-}
-
-export interface SidebarButton {
-  state: EditorState;
-  icon: string;
-  title?: string;
-  urlSuffix: string;
-  conditionType?: SideButtonType;
-  conditionTooltip?: string;
-}
-
-export const TopButtons: SidebarButton[] = [
+export const TopButtons: IDESidebarButton[] = [
   {
     state: EditorState.EDITOR,
     icon: "editor-v3",
     title: SidebarTopButtonTitles.EDITOR,
+    testId: SidebarTopButtonTitles.EDITOR,
     urlSuffix: "",
-  },
-  {
-    state: EditorState.DATA,
-    icon: "datasource-v3",
-    title: SidebarTopButtonTitles.DATA,
-    urlSuffix: "datasource",
-    conditionType: SideButtonType.DATSOURCE,
-    conditionTooltip: createMessage(EMPTY_DATASOURCE_TOOLTIP_SIDEBUTTON),
   },
 ];
 
-export const BottomButtons: SidebarButton[] = [
+export const BottomButtons: IDESidebarButton[] = [
+  {
+    state: EditorState.DATA,
+    icon: "datasource-v3",
+    tooltip: SidebarBottomButtonTitles.DATA,
+    testId: SidebarBottomButtonTitles.DATA,
+    urlSuffix: "datasource",
+  },
   {
     state: EditorState.LIBRARIES,
     icon: "packages-v3",
-    title: SidebarBottomButtonTitles.LIBRARIES,
+    tooltip: SidebarBottomButtonTitles.LIBRARIES,
+    testId: SidebarBottomButtonTitles.LIBRARIES,
     urlSuffix: "libraries",
   },
   {
     state: EditorState.SETTINGS,
     icon: "settings-v3",
-    title: SidebarBottomButtonTitles.SETTINGS,
+    tooltip: SidebarBottomButtonTitles.SETTINGS,
+    testId: SidebarBottomButtonTitles.SETTINGS,
     urlSuffix: "settings",
   },
 ];
@@ -127,8 +112,6 @@ export const EntityPaths: string[] = [
   JS_COLLECTION_ID_ADD_PATH,
   WIDGETS_EDITOR_ID_PATH,
   WIDGETS_EDITOR_ID_PATH + ADD_PATH,
-  CURL_IMPORT_PAGE_PATH,
-  CURL_IMPORT_PAGE_PATH + ADD_PATH,
   ENTITY_PATH,
 ];
 
@@ -143,10 +126,15 @@ export interface EntityItem {
   key: string;
   icon?: ReactNode;
   group?: string;
+  userPermissions?: string[];
 }
+
+export interface GenericEntityItem extends Omit<EntityItem, "type"> {}
 
 export type UseRoutes = Array<{
   key: string;
+  // TODO: Fix this the next time the file is edited
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: ComponentType<any>;
   path: string[];
   exact: boolean;
